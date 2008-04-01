@@ -5,45 +5,34 @@ import hsm.gui.FlickrComposrApp;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImagingOpException;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Random;
-import java.util.TreeMap;
-
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
 
 public class Extraktor {
 
-	private BufferedImage _im, _imOutput;
-	private Random _rand;
+	private BufferedImage _im;
 	private static double _threshold;
 	private BoundaryMap _bmap;
-	private boolean isInit;
 	private boolean _isDebug;
 	FlickrComposrApp gui;
 
 	public static void main(String[] args) {
 		Extraktor e = new Extraktor("blobs.jpg");
 		//BoundaryMap bm = e.getRandomExtraction();
-		//bm.print();		
-
+		//bm.print();
 	}
 
 	public Extraktor() 
 	{
 		_im = null;
-		_imOutput = null;
 	}
 
 	public Extraktor(String filename) 
@@ -51,7 +40,6 @@ public class Extraktor {
 		try
 		{
 			_im = ImageIO.read(new File(filename));
-			_imOutput = _im;
 		}
 		catch (IOException e)
 		{
@@ -61,12 +49,15 @@ public class Extraktor {
 		
 		if (_isDebug)
 		{
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					gui = new FlickrComposrApp();
-					gui.getJFrame().setVisible(true);
-				}
-			});
+			SwingUtilities.invokeLater(
+					new Runnable() 
+					{
+						public void run() {
+							gui = new FlickrComposrApp();
+							gui.getJFrame().setVisible(true);
+						}
+					}
+			);
 		}
 
 		initClass();
@@ -80,12 +71,11 @@ public class Extraktor {
 
 	private void initClass()
 	{
-		isInit = true;
 		_isDebug = true;
-		_rand = new Random();
-		_bmap = new BoundaryMap(_im.getWidth(),_im.getHeight());
+		Point initPt = new Point(25,25);
+		_bmap = new BoundaryMap(initPt);
 		_threshold = 100;
-		floodFill(_im, Color.red, new Point(25,25));
+		_bmap = floodFill(_im, Color.red, initPt, _bmap);
 		if (_isDebug)
 		{
 			//gui.setIm1(_im);
@@ -116,7 +106,7 @@ public class Extraktor {
 		}
 
 		// Writes the file
-		ImageIO.write( toWrite, filetype, f);
+		ImageIO.write(toWrite, filetype, f);
 
 	}	
 
@@ -127,48 +117,62 @@ public class Extraktor {
 	 * @param loc location at which to start fill
 	 * @throws IllegalArgumentException if loc is out of bounds of the image
 	 */
-	public static void floodFill(BufferedImage img, Color fillColor, Point loc) {
+	public BoundaryMap floodFill(BufferedImage img, Color fillColor, Point loc, BoundaryMap bm) {
 		if (loc.x < 0 || loc.x >= img.getWidth() || loc.y < 0 || loc.y >= img.getHeight()) throw new IllegalArgumentException();
 
 		WritableRaster raster = img.getRaster();
+		
 		int[] fill =
 			new int[] {fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(),
 				fillColor.getAlpha()};
+		
 		int[] old = raster.getPixel(loc.x, loc.y, new int[4]);
 
-		// Checks trivial case where loc is of the fill color
-		if (isFuzzyEqRGB(fill, old)) return;
-
-		floodLoop(raster, loc.x, loc.y, fill, old);
+		floodLoop(raster, loc.x, loc.y, fill, old, bm);
+		return bm;
 	}
 
 	// Recursively fills surrounding pixels of the old color
-	private static void floodLoop(WritableRaster raster, int x, int y, int[] fill, int[] old) {
+	private void floodLoop(WritableRaster raster, int x, int y, int[] fill, int[] old, BoundaryMap bm) {
 		Rectangle bounds = raster.getBounds();
 		int[] aux = {255, 255, 255, 255};
 
 		// finds the left side, filling along the way
 		int fillL = x;
-		do {
+		
+		do 
+		{
+			// TODO: Insert the point relative to the center.
+			bm.put(new Point(fillL,y));
 			raster.setPixel(fillL, y, fill);
 			fillL--;
-		} while (fillL >= 0 && isFuzzyEqRGB(raster.getPixel(fillL, y, aux), old));
+		}
+		while (fillL >= 0 && isFuzzyEqRGB(raster.getPixel(fillL, y, aux), old));
+		
 		fillL++;
 
 		// find the right right side, filling along the way
 		int fillR = x;
-		do {
+		
+		do 
+		{
+			// TODO: Insert the point relative to the center.
+			bm.put(new Point(fillR,y));
 			raster.setPixel(fillR, y, fill);
 			fillR++;
-		} while (fillR < bounds.width - 1 && isFuzzyEqRGB(raster.getPixel(fillR, y, aux), old));
+		} 
+		while (fillR < bounds.width - 1 && isFuzzyEqRGB(raster.getPixel(fillR, y, aux), old));
+		
 		fillR--;
 
 		// checks if applicable up or down
-		for (int i = fillL; i <= fillR; i++) {
-			if (y > 0 && isFuzzyEqRGB(raster.getPixel(i, y - 1, aux), old)) floodLoop(raster, i, y - 1,
-					fill, old);
-			if (y < bounds.height - 1 && isFuzzyEqRGB(raster.getPixel(i, y + 1, aux), old)) floodLoop(
-					raster, i, y + 1, fill, old);
+		for (int i = fillL; i <= fillR; i++) 
+		{
+			if (y > 0 && isFuzzyEqRGB(raster.getPixel(i, y - 1, aux), old))
+				floodLoop(raster, i, y - 1, fill, old, bm);
+			if (y < bounds.height - 1 && isFuzzyEqRGB(raster.getPixel(i, y + 1, aux), old))
+				floodLoop(
+					raster, i, y + 1, fill, old, bm);
 		}
 	}
 
@@ -183,63 +187,62 @@ public class Extraktor {
 
 	public class BoundaryMap
 	{
-		private HashMap<String, ExtractPoint> _bPoints;
-		public BoundaryMap(int width, int height)
+		private HashMap<String, Point> _bPoints;
+		private Point _center;
+		public BoundaryMap(Point center)
 		{
-			_bPoints = new HashMap<String, ExtractPoint>();
+			_center = center;
+			_bPoints = new HashMap<String, Point>();
 		}
 
 		public void print() {
-			Collection<ExtractPoint> pts = _bPoints.values();
-			for (Iterator<ExtractPoint> i = pts.iterator(); i.hasNext(); )
+			Collection<Point> pts = _bPoints.values();
+			for (Iterator<Point> i = pts.iterator(); i.hasNext(); )
 			{
-				ExtractPoint pt = i.next();
+				Point pt = i.next();
 				System.out.println(pt.toString());
 			}
 		}
 
-		public ExtractPoint get(int x, int y)
+		public Point get(int x, int y)
 		{
 			String k = x + "," + y;
 			if (_bPoints.containsKey(k))
 				return _bPoints.get(k);
 			else
 			{
-				ExtractPoint e = new ExtractPoint(x,y);
+				Point e = new Point(x,y);
 				_bPoints.put(k, e);
 				return e;
 			}
 		}
-	}
-
-	public class ExtractPoint extends Point
-	{
-		private static final long serialVersionUID = -1354987372950303369L;
-		private PointType type;
-
-		public PointType getType() {
-			return type;
-		}
-
-		public void setType(PointType type) {
-			this.type = type;
-		}
-
-		public ExtractPoint()
+		
+		public Point[] getBounds()
 		{
-			super();
-			type = PointType.UNKNOWN;
+			Iterator<Point> it = _bPoints.values().iterator();
+			Point max = new Point(0,0);
+			Point min = new Point(Integer.MAX_VALUE,Integer.MAX_VALUE);
+			for (Point p = it.next(); it.hasNext(); it.next())
+			{
+				if (p.x < min.x)
+					min.x = p.x;
+				
+				if (p.x > max.x)
+					max.x = p.x;
+				
+				if (p.y < min.y)
+					min.y = p.y;
+				
+				if (p.y > max.y)
+					max.y = p.y;
+				
+			}
+			return new Point[]{min, max};
 		}
-
-		public ExtractPoint(int x, int y)
+		
+		public void put(Point p)
 		{
-			super(x,y);
-			type = PointType.UNKNOWN;
-		}
-
-		public String toString()
-		{
-			return "(" + x + "," + y + ") : " + type;
+			_bPoints.put(p.x + "," + p.y, p);
 		}
 	}
 }
