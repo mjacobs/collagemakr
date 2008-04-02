@@ -17,7 +17,6 @@ import com.aetrion.flickr.photos.PhotoList;
 import com.aetrion.flickr.photos.PhotosInterface;
 import com.aetrion.flickr.photos.SearchParameters;
 import com.aetrion.flickr.photos.Size;
-import com.aetrion.flickr.photos.licenses.License;
 import com.aetrion.flickr.tags.Tag;
 import com.aetrion.flickr.tags.TagsInterface;
 
