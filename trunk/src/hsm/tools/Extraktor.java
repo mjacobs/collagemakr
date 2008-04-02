@@ -1,7 +1,5 @@
 package hsm.tools;
 
-import hsm.gui.FlickrComposrApp;
-
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -15,83 +13,85 @@ import java.util.Iterator;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
-
 
 public class Extraktor {
 
+	private static final double THRESHOLD = 1000;
+	
 	private BufferedImage _im, _imFF;
-	private static double _threshold;
 	private BoundaryMap _bmap;
 	private Random _rand;
-	private boolean _isDebug;
-	FlickrComposrApp gui;
-
-	public static void main(String[] args) 
+	
+	public static void main(String[] args)
 	{
-		//Extraktor e;
-		for (int i = 0; i < 10; i++)
-			new Extraktor("cowboy.jpg");
+		Extraktor e = new Extraktor();
+		try 
+		{ 
+			for (int i = 0; i < 20; i++)
+				writeImage(e.getExtract("yarnell.jpg"), "extract"+i+".jpg"); 
+		}
+		catch (IOException ioe) { ioe.printStackTrace(); }
 	}
-
-	public Extraktor(String filename) 
+	
+	public Extraktor() 
 	{
 		_rand = new Random();
-		
+	}
+	
+	public BufferedImage getExtract(String fname)
+	{
 		try
 		{
-			_im = ImageIO.read(new File(filename));
-			_imFF = ImageIO.read(new File(filename));
+			_im = ImageIO.read(new File(fname));
+			_imFF = ImageIO.read(new File(fname));
 		}
 		catch (IOException e)
 		{
-			System.out.println("Can't read filename " + filename);
+			System.out.println("Can't read filename " + fname);
 			e.printStackTrace();
 		}
 		
-		if (_isDebug)
-		{
-			SwingUtilities.invokeLater(
-					new Runnable() 
-					{
-						public void run() {
-							gui = new FlickrComposrApp();
-							gui.getJFrame().setVisible(true);
-						}
-					}
-			);
-		}
-
-		runExtract();
+		return getRandomExtract();
 	}
 
-	public void setImage(BufferedImage b)
+	public BufferedImage getExtract(BufferedImage b)
 	{
 		_im = b;
-		runExtract();
+		
+		_imFF = new BufferedImage(_im.getWidth(), _im.getHeight(), BufferedImage.TYPE_INT_RGB);
+		_imFF.setData(_imFF.getData());
+		
+		return getRandomExtract();
 	}
-
-	private void runExtract()
+	
+	public BufferedImage getExtract(BufferedImage b, Point p)
 	{
-		_isDebug = true;
+		_im = b;
+		
+		_imFF = new BufferedImage(_im.getWidth(), _im.getHeight(), BufferedImage.TYPE_INT_RGB);
+		_imFF.setData(_imFF.getData());
+		
+		return getPointExtract(p);
+	}
+	
+	private BufferedImage getRandomExtract()
+	{			
 		Point initPt = new Point(_rand.nextInt(_im.getWidth()),_rand.nextInt(_im.getHeight()));
 		_bmap = new BoundaryMap(initPt);
-		_threshold = 5000;
 		floodFill(_imFF, Color.red, initPt, _bmap);
 
 		BufferedImage imNew = copyPixels(_im, _bmap);
 		
-		if (_isDebug)
-		{
-			//gui.setIm1(_im);
-			try{
-				writeImage(imNew,"out" + _rand.nextInt() + ".jpg");
-			}catch(IOException e)
-			{
-				System.err.println("err");
-				e.printStackTrace();
-			}
-		}
+		return imNew;
+	}
+	
+	private BufferedImage getPointExtract(Point p)
+	{
+		floodFill(_imFF, Color.red, p, _bmap);
+
+		BufferedImage imNew = copyPixels(_im, _bmap);
+		
+		return imNew;
 	}
 
 	private BufferedImage copyPixels(BufferedImage im, BoundaryMap bm) {
@@ -103,7 +103,9 @@ public class Extraktor {
 		
 		Collection<Point> ptsToCopy = bm.getPoints().values();
 		
-		Point c = bm.getCenter();		int cX = -bounds[0].x;
+		// Gets the pixel which is the center of this extract in the original image
+		Point c = bm.getCenter();
+		int cX = -bounds[0].x;
 		int cY = -bounds[0].y;
 		
 		for (Iterator<Point> i = ptsToCopy.iterator(); i.hasNext();)
@@ -115,7 +117,7 @@ public class Extraktor {
 		return imNew;
 	}
 
-	public static void writeImage (BufferedImage toWrite, String fileout) throws IOException {
+	private static void writeImage (BufferedImage toWrite, String fileout) throws IOException {
 
 		// The output file
 		File f = new File(fileout);
@@ -143,8 +145,11 @@ public class Extraktor {
 	 * @param loc location at which to start fill
 	 * @throws IllegalArgumentException if loc is out of bounds of the image
 	 */
-	public void floodFill(BufferedImage img, Color fillColor, Point loc, BoundaryMap bm) 
+	private void floodFill(BufferedImage img, Color fillColor, Point loc, BoundaryMap bm) 
 	{
+		if ((_im == null)||(_imFF == null)) 	
+			return;
+
 		if (loc.x < 0 || loc.x >= img.getWidth() || loc.y < 0 || loc.y >= img.getHeight()) throw new IllegalArgumentException();
 
 		WritableRaster raster = img.getRaster();
@@ -170,10 +175,10 @@ public class Extraktor {
 		do 
 		{
 			bm.put(new Point(fillL-bm.getCenter().x,y-bm.getCenter().y));
-			raster.setPixel(fillL, y, fill);
+			//raster.setPixel(fillL, y, fill);
 			fillL--;
 		}
-		while (fillL >= 0 && isFuzzyEqRGB(raster.getPixel(fillL, y, aux), old));
+		while (fillL >= 0 && bm.get(fillL-bm.getCenter().x,y-bm.getCenter().y)==null && isFuzzyEqRGB(raster.getPixel(fillL, y, aux), old));
 		
 		fillL++;
 
@@ -183,19 +188,19 @@ public class Extraktor {
 		do 
 		{
 			bm.put(new Point(fillR-bm.getCenter().x,y-bm.getCenter().y));
-			raster.setPixel(fillR, y, fill);
+			//raster.setPixel(fillR, y, fill);
 			fillR++;
 		} 
-		while (fillR < bounds.width - 1 && isFuzzyEqRGB(raster.getPixel(fillR, y, aux), old));
+		while (fillR < bounds.width - 1 && bm.get(fillR-bm.getCenter().x, y-bm.getCenter().y)==null && isFuzzyEqRGB(raster.getPixel(fillR, y, aux), old) );
 		
 		fillR--;
 
 		// checks if applicable up or down
 		for (int i = fillL; i <= fillR; i++) 
 		{
-			if (y > 0 && isFuzzyEqRGB(raster.getPixel(i, y - 1, aux), old))
+			if (y > 0  && bm.get(i-bm.getCenter().x, y-1-bm.getCenter().y)==null && isFuzzyEqRGB(raster.getPixel(i, y - 1, aux), old))
 				floodLoop(raster, i, y - 1, fill, old, bm);
-			if (y < bounds.height - 1 && isFuzzyEqRGB(raster.getPixel(i, y + 1, aux), old))
+			if (y < bounds.height - 1 && bm.get(i-bm.getCenter().x, y + 1-bm.getCenter().y)==null && isFuzzyEqRGB(raster.getPixel(i, y + 1, aux), old))
 				floodLoop(raster, i, y + 1, fill, old, bm);
 		}
 	}
@@ -204,10 +209,10 @@ public class Extraktor {
 	// Could use Arrays.equals(int[], int[]), but this is probably a little faster...
 	private static boolean isFuzzyEqRGB(int[] pix1, int[] pix2) {
 		double diff = Math.pow(pix1[0] - pix2[0],2) + Math.pow(pix1[1] - pix2[1],2) + Math.pow(pix1[2] - pix2[2],2);
-		return (diff < _threshold);
+		return (diff < THRESHOLD);
 	}
 
-	public class BoundaryMap
+	private class BoundaryMap
 	{
 		private HashMap<String, Point> _bPoints;
 		private Point _center;
@@ -236,15 +241,7 @@ public class Extraktor {
 
 		public Point get(int x, int y)
 		{
-			String k = x + "," + y;
-			if (_bPoints.containsKey(k))
-				return _bPoints.get(k);
-			else
-			{
-				Point e = new Point(x,y);
-				_bPoints.put(k, e);
-				return e;
-			}
+			return _bPoints.get(x + "," + y);
 		}
 		
 		public Point[] getBounds()
