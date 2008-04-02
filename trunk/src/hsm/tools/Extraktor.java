@@ -12,34 +12,36 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Random;
+
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
 
 public class Extraktor {
 
-	private BufferedImage _im;
+	private BufferedImage _im, _imFF;
 	private static double _threshold;
 	private BoundaryMap _bmap;
+	private Random _rand;
 	private boolean _isDebug;
 	FlickrComposrApp gui;
 
-	public static void main(String[] args) {
-		Extraktor e = new Extraktor("blobs.jpg");
-		//BoundaryMap bm = e.getRandomExtraction();
-		//bm.print();
-	}
-
-	public Extraktor() 
+	public static void main(String[] args) 
 	{
-		_im = null;
+		//Extraktor e;
+		for (int i = 0; i < 10; i++)
+			new Extraktor("cowboy.jpg");
 	}
 
 	public Extraktor(String filename) 
 	{
+		_rand = new Random();
+		
 		try
 		{
 			_im = ImageIO.read(new File(filename));
+			_imFF = ImageIO.read(new File(filename));
 		}
 		catch (IOException e)
 		{
@@ -60,33 +62,57 @@ public class Extraktor {
 			);
 		}
 
-		initClass();
+		runExtract();
 	}
 
 	public void setImage(BufferedImage b)
 	{
 		_im = b;
-		initClass();
+		runExtract();
 	}
 
-	private void initClass()
+	private void runExtract()
 	{
 		_isDebug = true;
-		Point initPt = new Point(25,25);
+		Point initPt = new Point(_rand.nextInt(_im.getWidth()),_rand.nextInt(_im.getHeight()));
 		_bmap = new BoundaryMap(initPt);
-		_threshold = 100;
-		_bmap = floodFill(_im, Color.red, initPt, _bmap);
+		_threshold = 5000;
+		floodFill(_imFF, Color.red, initPt, _bmap);
+
+		BufferedImage imNew = copyPixels(_im, _bmap);
+		
 		if (_isDebug)
 		{
 			//gui.setIm1(_im);
 			try{
-				writeImage(_im,"ex.jpg");
+				writeImage(imNew,"out" + _rand.nextInt() + ".jpg");
 			}catch(IOException e)
 			{
 				System.err.println("err");
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private BufferedImage copyPixels(BufferedImage im, BoundaryMap bm) {
+		Point[] bounds = bm.getBounds();
+		
+		int w = bounds[1].x - bounds[0].x + 1;
+		int h = bounds[1].y - bounds[0].y + 1;
+		BufferedImage imNew = new BufferedImage(w,h,_im.getType());
+		
+		Collection<Point> ptsToCopy = bm.getPoints().values();
+		
+		Point c = bm.getCenter();		int cX = -bounds[0].x;
+		int cY = -bounds[0].y;
+		
+		for (Iterator<Point> i = ptsToCopy.iterator(); i.hasNext();)
+		{
+			Point pt = i.next();
+			imNew.setRGB(cX + pt.x,cY + pt.y, _im.getRGB(c.x + pt.x,c.y + pt.y));
+		}
+		
+		return imNew;
 	}
 
 	public static void writeImage (BufferedImage toWrite, String fileout) throws IOException {
@@ -117,7 +143,8 @@ public class Extraktor {
 	 * @param loc location at which to start fill
 	 * @throws IllegalArgumentException if loc is out of bounds of the image
 	 */
-	public BoundaryMap floodFill(BufferedImage img, Color fillColor, Point loc, BoundaryMap bm) {
+	public void floodFill(BufferedImage img, Color fillColor, Point loc, BoundaryMap bm) 
+	{
 		if (loc.x < 0 || loc.x >= img.getWidth() || loc.y < 0 || loc.y >= img.getHeight()) throw new IllegalArgumentException();
 
 		WritableRaster raster = img.getRaster();
@@ -129,11 +156,11 @@ public class Extraktor {
 		int[] old = raster.getPixel(loc.x, loc.y, new int[4]);
 
 		floodLoop(raster, loc.x, loc.y, fill, old, bm);
-		return bm;
 	}
 
 	// Recursively fills surrounding pixels of the old color
-	private void floodLoop(WritableRaster raster, int x, int y, int[] fill, int[] old, BoundaryMap bm) {
+	private void floodLoop(WritableRaster raster, int x, int y, int[] fill, int[] old, BoundaryMap bm) 
+	{
 		Rectangle bounds = raster.getBounds();
 		int[] aux = {255, 255, 255, 255};
 
@@ -142,8 +169,7 @@ public class Extraktor {
 		
 		do 
 		{
-			// TODO: Insert the point relative to the center.
-			bm.put(new Point(fillL,y));
+			bm.put(new Point(fillL-bm.getCenter().x,y-bm.getCenter().y));
 			raster.setPixel(fillL, y, fill);
 			fillL--;
 		}
@@ -156,8 +182,7 @@ public class Extraktor {
 		
 		do 
 		{
-			// TODO: Insert the point relative to the center.
-			bm.put(new Point(fillR,y));
+			bm.put(new Point(fillR-bm.getCenter().x,y-bm.getCenter().y));
 			raster.setPixel(fillR, y, fill);
 			fillR++;
 		} 
@@ -171,8 +196,7 @@ public class Extraktor {
 			if (y > 0 && isFuzzyEqRGB(raster.getPixel(i, y - 1, aux), old))
 				floodLoop(raster, i, y - 1, fill, old, bm);
 			if (y < bounds.height - 1 && isFuzzyEqRGB(raster.getPixel(i, y + 1, aux), old))
-				floodLoop(
-					raster, i, y + 1, fill, old, bm);
+				floodLoop(raster, i, y + 1, fill, old, bm);
 		}
 	}
 
@@ -183,8 +207,6 @@ public class Extraktor {
 		return (diff < _threshold);
 	}
 
-	public enum PointType { UNKNOWN, INSIDE, OUTSIDE, BORDER };
-
 	public class BoundaryMap
 	{
 		private HashMap<String, Point> _bPoints;
@@ -193,6 +215,14 @@ public class Extraktor {
 		{
 			_center = center;
 			_bPoints = new HashMap<String, Point>();
+		}
+
+		public HashMap<String, Point> getPoints() {
+			return _bPoints;
+		}
+
+		public Point getCenter() {
+			return _center;
 		}
 
 		public void print() {
@@ -219,11 +249,12 @@ public class Extraktor {
 		
 		public Point[] getBounds()
 		{
-			Iterator<Point> it = _bPoints.values().iterator();
+			
 			Point max = new Point(0,0);
 			Point min = new Point(Integer.MAX_VALUE,Integer.MAX_VALUE);
-			for (Point p = it.next(); it.hasNext(); it.next())
+			for (Iterator<Point> it = _bPoints.values().iterator(); it.hasNext(); )
 			{
+				Point p = it.next();
 				if (p.x < min.x)
 					min.x = p.x;
 				
@@ -245,4 +276,5 @@ public class Extraktor {
 			_bPoints.put(p.x + "," + p.y, p);
 		}
 	}
+
 }
