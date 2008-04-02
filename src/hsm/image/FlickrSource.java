@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Vector;
 
 import org.xml.sax.SAXException;
 
@@ -23,38 +24,45 @@ import com.aetrion.flickr.tags.TagsInterface;
 
 import java.util.Random;
 
+/**
+ * @author bmoore
+ *
+ */
 public class FlickrSource implements ImageSource {
 
 	private Flickr _flickr;
 	private Random _rand;
 	private SearchParameters _query;
-	private int _numImages;
+	private Vector<Photo> _photoPool;
 	
-	private final boolean recent = false;
+	private final boolean recent = true;
 	
 	@SuppressWarnings("unchecked")
 	public FlickrSource() throws ImageException
 	{
+		Flickr.debugStream = true;
+		
 		_rand = new Random();
 		_flickr = new Flickr("d989e76ce73619396ca877158e11aac2");
+
+//		try {
+//			Collection<License> lics = (Collection<License>)_flickr.getLicensesInterface().getInfo();
+//			for (License li : lics)
+//			{
+//				System.out.println(li.getId() + " " + li.getName());
+//			}
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (SAXException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (FlickrException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 		
-		try {
-			Collection<License> lics = (Collection<License>)_flickr.getLicensesInterface().getInfo();
-			for (License li : lics)
-			{
-				System.out.println(li.getId() + " " + li.getName());
-			}
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (SAXException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (FlickrException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+		// create the query
 		_query = new SearchParameters();
 		_query.setSafeSearch(Flickr.SAFETYLEVEL_SAFE);
 		_query.setText("e");
@@ -63,24 +71,36 @@ public class FlickrSource implements ImageSource {
 		_query.setExtrasOwnerName(true);
 		_query.setExtrasTags(true);
 		
-		PhotoList scoutResult;
+		PhotoList cacheResult;
 		PhotosInterface photosInterface = _flickr.getPhotosInterface();
+		int numToCache = 500;
+		int numImages;
 		
 		try {
+			// get the images
 			if (recent)
 			{
-				scoutResult = photosInterface.getRecent(0,0);
+				cacheResult = photosInterface.getRecent(numToCache,1);
 			}
 			else
 			{
-				scoutResult = photosInterface.search(_query, 0, 0);
+				cacheResult = photosInterface.search(_query, numToCache, 1);
 			}
 			
-			_numImages = scoutResult.getTotal();
-			System.out.println(_numImages + " photos");
+			numImages = cacheResult.size();
 			
-			if (_numImages <= 0)
+			if (numImages <= 0)
 				throw new ImageException();
+			
+			// cache first page of results into _photoPool
+			// this seems to be the best option, since the API is broken
+			//  for selecting random pages
+			_photoPool = new Vector<Photo>();
+			
+			for (int i=0; i<numImages; i++)
+			{
+				_photoPool.add(((Photo)cacheResult.get(i)));
+			}
 
 		} catch (IOException e) {
 			throw new ImageException();
@@ -93,44 +113,26 @@ public class FlickrSource implements ImageSource {
 		
 
 	}
+
 	
-	public AnnotatedImage getRandomImage() throws ImageException {
-		PhotoList realResult;
-		PhotosInterface photosInterface = _flickr.getPhotosInterface();
+	public AnnotatedImage getRandomImage() {
+		// select random photo from the cached results
+		int whichOne = _rand.nextInt(_photoPool.size());
 		
-		int whichOne = _rand.nextInt(_numImages);
 		try {
-			System.out.println("picking " + whichOne);
-			int perPage = 100;
-			int whichPage = whichOne / perPage;
-			int idxOnPage = whichOne % perPage;
-			
-			if (recent)
-			{
-				realResult = photosInterface.getRecent(perPage, whichPage);
-			}
-			else
-			{
-				realResult = photosInterface.search(_query, perPage, whichPage);//getRecent(1, whichOne);	
-			}
-			
-			if (realResult.getPerPage() <= 0)
-				throw new ImageException();
-			
-			Photo randPhoto = (Photo)realResult.get(idxOnPage);
-			
-			return getFlickrImage(randPhoto, _flickr);
-			
-		} catch (IOException e) {
-			throw new ImageException();
-		} catch (SAXException e) {
-			throw new ImageException();
-		} catch (FlickrException e) {
-			e.printStackTrace();
-			throw new ImageException();
+			return getFlickrImage(_photoPool.get(whichOne), _flickr);
+		} catch (ImageException e) {
+			return null;
 		}
 	}
 	
+	
+	/**
+	 * @param p - flickrj Photo object describing the photo.  <i>Must include owner and tag information</i>
+	 * @param flickr - the flickr session
+	 * @return an AnnotatedImage object describing the image from flickr
+	 * @throws ImageException if something unrecoverable happens
+	 */
 	private AnnotatedImage getFlickrImage(Photo p, Flickr flickr) throws ImageException {
 
 		return new AnnotatedImage(loadImage(p, flickr.getPhotosInterface()), 
