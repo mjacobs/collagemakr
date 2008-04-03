@@ -39,7 +39,7 @@ public class FlickrSource implements ImageSource {
 	@SuppressWarnings("unchecked")
 	public FlickrSource() throws ImageException
 	{
-		Flickr.debugStream = true;
+		//Flickr.debugStream = true;
 		
 		_rand = new Random();
 		_flickr = new Flickr("d989e76ce73619396ca877158e11aac2");
