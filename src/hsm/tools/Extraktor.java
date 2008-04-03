@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
 
 public class Extraktor {
 
-	private static final double THRESHOLD = 1000;
+	private static final double THRESHOLD = 5000;
 	
 	private BufferedImage _im, _imFF;
 	private BoundaryMap _bmap;
@@ -25,10 +25,12 @@ public class Extraktor {
 	public static void main(String[] args)
 	{
 		Extraktor e = new Extraktor();
+		String d = System.getProperty("file.separator");
 		try 
 		{ 
 			for (int i = 0; i < 20; i++)
-				writeImage(e.getExtract("yarnell.jpg"), "extract"+i+".jpg"); 
+				writeImage(e.getExtract("data"+d+"samples"+d+"cowboy.jpg"), 
+						"data"+d+"output"+d+"extract"+i+".jpg"); 
 		}
 		catch (IOException ioe) { ioe.printStackTrace(); }
 	}
@@ -59,7 +61,7 @@ public class Extraktor {
 		_im = b;
 		
 		_imFF = new BufferedImage(_im.getWidth(), _im.getHeight(), BufferedImage.TYPE_INT_RGB);
-		_imFF.setData(_imFF.getData());
+		_imFF.setData(_im.getData());
 		
 		return getRandomExtract();
 	}
@@ -69,18 +71,36 @@ public class Extraktor {
 		_im = b;
 		
 		_imFF = new BufferedImage(_im.getWidth(), _im.getHeight(), BufferedImage.TYPE_INT_RGB);
-		_imFF.setData(_imFF.getData());
+		_imFF.setData(_im.getData());
 		
 		return getPointExtract(p);
 	}
 	
-	private BufferedImage getRandomExtract()
-	{			
+	
+	public BufferedImage getRandomExtract(BufferedImage b, BufferedImage back, Point p)
+	{		
+		_im = b;
+		
+		_imFF = new BufferedImage(_im.getWidth(), _im.getHeight(), BufferedImage.TYPE_INT_RGB);
+		_imFF.setData(_im.getData());
+		
 		Point initPt = new Point(_rand.nextInt(_im.getWidth()),_rand.nextInt(_im.getHeight()));
 		_bmap = new BoundaryMap(initPt);
 		floodFill(_imFF, Color.red, initPt, _bmap);
 
-		BufferedImage imNew = copyPixels(_im, _bmap);
+		BufferedImage imNew = copyPixelsInto(_im, back, p, _bmap);
+		
+		return imNew;
+	}
+	
+	private BufferedImage getRandomExtract()
+	{	
+		_rand.nextGaussian();
+		Point initPt = new Point(_rand.nextInt(_im.getWidth()),_rand.nextInt(_im.getHeight()));
+		_bmap = new BoundaryMap(initPt);
+		floodFill(_imFF, Color.red, initPt, _bmap);
+
+		BufferedImage imNew = copyPixelsToNew(_im, _bmap);
 		
 		return imNew;
 	}
@@ -89,17 +109,43 @@ public class Extraktor {
 	{
 		floodFill(_imFF, Color.red, p, _bmap);
 
-		BufferedImage imNew = copyPixels(_im, _bmap);
+		BufferedImage imNew = copyPixelsToNew(_im, _bmap);
 		
 		return imNew;
 	}
-
-	private BufferedImage copyPixels(BufferedImage im, BoundaryMap bm) {
+	
+	private BufferedImage copyPixelsInto(BufferedImage im, BufferedImage copyInto, Point pt, BoundaryMap bm)
+	{
 		Point[] bounds = bm.getBounds();
 		
 		int w = bounds[1].x - bounds[0].x + 1;
 		int h = bounds[1].y - bounds[0].y + 1;
-		BufferedImage imNew = new BufferedImage(w,h,_im.getType());
+		
+		Collection<Point> ptsToCopy = bm.getPoints().values();
+		
+		// Gets the pixel which is the center of this extract in the original image
+		Point c = bm.getCenter();
+		int cX = -bounds[0].x + pt.x;
+		int cY = -bounds[0].y + pt.y;
+		
+		for (Iterator<Point> i = ptsToCopy.iterator(); i.hasNext();)
+		{
+			Point ptIt = i.next();
+			copyInto.setRGB(
+					Math.min(cX + ptIt.x,copyInto.getWidth()),
+					Math.min(cY + ptIt.y,copyInto.getHeight()), 
+					im.getRGB(c.x + ptIt.x,c.y + ptIt.y));
+		}
+		
+		return copyInto;
+	}
+
+	private BufferedImage copyPixelsToNew(BufferedImage im, BoundaryMap bm) {
+		Point[] bounds = bm.getBounds();
+		
+		int w = bounds[1].x - bounds[0].x + 1;
+		int h = bounds[1].y - bounds[0].y + 1;
+		BufferedImage imNew = new BufferedImage(w,h,im.getType());
 		
 		Collection<Point> ptsToCopy = bm.getPoints().values();
 		
@@ -111,7 +157,7 @@ public class Extraktor {
 		for (Iterator<Point> i = ptsToCopy.iterator(); i.hasNext();)
 		{
 			Point pt = i.next();
-			imNew.setRGB(cX + pt.x,cY + pt.y, _im.getRGB(c.x + pt.x,c.y + pt.y));
+			imNew.setRGB(cX + pt.x,cY + pt.y, im.getRGB(c.x + pt.x,c.y + pt.y));
 		}
 		
 		return imNew;
@@ -147,8 +193,7 @@ public class Extraktor {
 	 */
 	private void floodFill(BufferedImage img, Color fillColor, Point loc, BoundaryMap bm) 
 	{
-		if ((_im == null)||(_imFF == null)) 	
-			return;
+		if (img == null) return;
 
 		if (loc.x < 0 || loc.x >= img.getWidth() || loc.y < 0 || loc.y >= img.getHeight()) throw new IllegalArgumentException();
 
