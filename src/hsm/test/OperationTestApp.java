@@ -2,6 +2,7 @@ package hsm.test;
 
 import hsm.image.*;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -43,8 +44,8 @@ public class OperationTestApp {
 			if (_image != null)
 			{
 				g2d.drawImage(_image.getImage(), 
-							  Math.round(_image.getLocation().x), 
-							  Math.round(_image.getLocation().y), this);
+							  (int)Math.round(_image.getLocation().x), 
+							  (int)Math.round(_image.getLocation().y), this);
 				
 				g2d.setColor(Color.GREEN);
 				g2d.draw(_image.getBounds());
@@ -55,7 +56,7 @@ public class OperationTestApp {
 	private class AnimationPerformer implements ActionListener
 	{
 		LayerFrame _frame;
-		LayerImage _img;
+		LayerImage _img1, _img2;
 		float _ang = 0.0f;
 		RenderingHints _hints;
 		
@@ -64,7 +65,8 @@ public class OperationTestApp {
 			_frame = inFrame;
 			try {
 				FlickrSource src = new FlickrSource();
-				_img = new LayerImage(src.getRandomImage().getImage(),new Point2D.Float(100, 100));
+				_img1 = new LayerImage(src.getRandomImage().getImage(),new Point2D.Double(100, 100));
+				_img2 = new LayerImage(src.getRandomImage().getImage());
 			} catch (ImageException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -79,10 +81,12 @@ public class OperationTestApp {
 			AffineTransform af = AffineTransform.getRotateInstance(_ang, 320, 240);
 			
 			
-			ImageOperation op = new BufferedImageOpAdaptor(
-											new AffineTransformOp(af, _hints), 640, 480);
+			ImageOperation op1 = new BufferedImageOpAdaptor(
+											new AffineTransformOp(af, _hints));
 			
-			_frame.setImage(op.perform(_img));
+			ImageOperation op2 = new CompositeAdaptor(AlphaComposite.Xor);
+			
+			_frame.setImage(op2.perform(op1.perform(_img1), _img2));
 			
 			_ang += 0.01f;
 		}
