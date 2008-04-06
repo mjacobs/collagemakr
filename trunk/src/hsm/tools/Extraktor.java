@@ -3,6 +3,8 @@ package hsm.tools;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -21,9 +23,11 @@ import javax.imageio.ImageIO;
 public class Extraktor
 {
 	
-	private static final double THRESHOLD = 5000;
+	private static final double COLOR_SPREAD_THRESHOLD = 5000;
 	
-	private static final double SIZE_THRESHOLD = .3;
+	private static final double SIZE_THRESHOLD = .15;
+
+	private static final int NUM_ATTEMPTS = 10;
 	
 	private BufferedImage _im, _imFF;
 	private BoundaryMap _bmap;
@@ -119,27 +123,62 @@ public class Extraktor
 		_bmap = new BoundaryMap(initPt);
 		
 		floodFill(copyImage(_imFF), Color.red, initPt, _bmap);
+		double gatherRatio = (double) _bmap.size()		/ (double) (_im.getWidth() * _im.getHeight());
+		int numAttempts = 0;
 		
-		while ((double) _bmap.size()
-				/ (double) (_im.getWidth() * _im.getHeight()) < SIZE_THRESHOLD)
+		while ((gatherRatio < SIZE_THRESHOLD) && (numAttempts++ < NUM_ATTEMPTS))
 		{
-			System.out.println(((double) _bmap.size() / (double) (_im
-					.getWidth() * _im.getHeight()))
-					+ " w/ "
-					+ _bmap.size()
-					+ " div by "
-					+ (_im.getWidth() * _im.getHeight()));
+			System.out.println(gatherRatio);
+			
 			initPt = new Point(_rand.nextInt(_im.getWidth()), _rand.nextInt(_im
 					.getHeight()));
-			_bmap = new BoundaryMap(initPt);
-			floodFill(copyImage(_imFF), Color.red, initPt, _bmap);
+			BoundaryMap resMap = new BoundaryMap(initPt);
+			floodFill(copyImage(_imFF), Color.red, initPt, resMap);
+			
+			if (resMap.size() > _bmap.size())
+			{
+				_bmap = resMap;
+			}
+			
+			gatherRatio = (double) resMap.size() / (double) (_im.getWidth() * _im.getHeight());
 		}
-		System.out.println("SUCCESS!!!!!!!!!!!!!!!!!!");
-		BufferedImage imNew = copyPixelsToNew(_im, _bmap);
+		
+		BufferedImage imNew;
+		
+		if (numAttempts >= NUM_ATTEMPTS)
+		{
+			imNew = copyCenterOval(_im);
+		}
+		else
+		{
+			imNew = copyPixelsToNew(_im, _bmap);
+		}
 		
 		return imNew;
 	}
 	
+	private BufferedImage copyCenterOval(BufferedImage im) {
+		Ellipse2D e = new Ellipse2D.Double(0,0, im.getWidth()-1, im.getHeight()-1);
+		PathIterator pit = e.getPathIterator(null, .01);
+		  
+		double[] coords = new double[2];
+		  
+		while(!pit.isDone()) 
+		{
+			int t = pit.currentSegment(coords);
+			switch (t)
+			{
+	            case PathIterator.SEG_MOVETO:  // fall through
+	            case PathIterator.SEG_LINETO:
+	            case PathIterator.SEG_CLOSE: break;
+	            default:
+	                System.out.println("Unexpected type: " + t);
+			}
+		}
+		
+		return null;
+	}
+
 	private BufferedImage getPointExtract(Point p)
 	{
 		floodFill(_imFF, Color.red, p, _bmap);
@@ -329,7 +368,7 @@ public class Extraktor
 		double diff = Math.pow(pix1[0] - pix2[0], 2)
 				+ Math.pow(pix1[1] - pix2[1], 2)
 				+ Math.pow(pix1[2] - pix2[2], 2);
-		return (diff < THRESHOLD);
+		return (diff < COLOR_SPREAD_THRESHOLD);
 	}
 	
 	private class BoundaryMap
