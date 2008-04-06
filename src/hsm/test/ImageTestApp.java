@@ -14,6 +14,11 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
+/**
+ * @author bjmoore
+ * Testing application for single Image level testing 
+ * - retrieval, extraction, etc
+ */
 public class ImageTestApp {
 
 	private class ImageFrame extends JFrame
