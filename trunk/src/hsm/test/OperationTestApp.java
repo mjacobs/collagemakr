@@ -17,8 +17,13 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
+/**
+ * @author bjmoore
+ * Testing application for ImageOperation testing
+ * - testing individual operations
+ */
 public class OperationTestApp {
-
+	
 	private class LayerFrame extends JComponent
 	{
 		private static final long serialVersionUID = 1L;
