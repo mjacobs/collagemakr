@@ -1,5 +1,6 @@
 package hsm.tools;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -54,9 +55,9 @@ public class Extraktor
 	{
 		_rand = new Random();
 		
-//		String d = System.getProperty("file.separator");
-//		BufferedImage e = getExtract("data" + d + "samples" + d	+ "cowboy.jpg");
-//		BufferedImage o = copyCenterOval(e);
+		String d = System.getProperty("file.separator");
+		BufferedImage e = getExtract("data" + d + "samples" + d	+ "cowboy.jpg");
+		BufferedImage o = copyCenterOval(e);
 		
 	}
 	
@@ -210,7 +211,6 @@ public class Extraktor
 		Graphics2D g = (Graphics2D)imNew.getGraphics();
 		paintEllipse(g,im);
 		
-		
 		return imNew;
 	}
 	
@@ -221,13 +221,12 @@ public class Extraktor
 				RenderingHints.VALUE_ANTIALIAS_ON);
 				
 		g2.setRenderingHints(hints);
-		
 		// Create a round rectangle.
 		Ellipse2D r = new Ellipse2D.Double(0,0, mImage.getWidth(), mImage.getHeight());
 		// Create a texture rectangle the same size as the texture image.
 		Rectangle2D tr = new Rectangle2D.Double(0, 0, mImage.getWidth(), mImage.getHeight());
-		g2.setPaint(Color.white);
-		g2.fill(tr);
+		//g2.setPaint(Color.black);
+		//g2.fill(tr);
 		// Create the TexturePaint.
 		TexturePaint tp = new TexturePaint(mImage, tr);
 		// Now fill the round rectangle.
@@ -241,7 +240,7 @@ public class Extraktor
 		
 		int w = bounds[1].x - bounds[0].x + 1;
 		int h = bounds[1].y - bounds[0].y + 1;
-		BufferedImage imNew = new BufferedImage(w, h, im.getType());
+		BufferedImage imNew = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
 		
 		Collection<Point> ptsToCopy = bm.getPoints().values();
 		
@@ -254,8 +253,11 @@ public class Extraktor
 		for (Iterator<Point> i = ptsToCopy.iterator(); i.hasNext();)
 		{
 			Point pt = i.next();
-			imNew.setRGB(cX + pt.x, cY + pt.y, im
-					.getRGB(c.x + pt.x, c.y + pt.y));
+			int rgb = im.getRGB(c.x + pt.x, c.y + pt.y);
+	        rgb = clearAlpha(rgb);
+	        rgb |= ((255 & 0xff) << 24);
+	        
+			imNew.setRGB(cX + pt.x, cY + pt.y, rgb);
 		}
 		
 		return imNew;
@@ -390,6 +392,12 @@ public class Extraktor
 				+ Math.pow(pix1[2] - pix2[2], 2);
 		return (diff < COLOR_SPREAD_THRESHOLD);
 	}
+	
+    private static int clearAlpha(int n) {
+        n <<= 8;
+        n >>= 8;
+        return n;
+    }
 	
 	public void setColorSpreadThreshold(double cst)
 	{
