@@ -1,21 +1,21 @@
 package hsm.tools;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.TexturePaint;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -23,11 +23,11 @@ import javax.imageio.ImageIO;
 public class Extraktor
 {
 	
-	private static final double COLOR_SPREAD_THRESHOLD = 5000;
+	private double COLOR_SPREAD_THRESHOLD = 3000;
 	
-	private static final double SIZE_THRESHOLD = .15;
-
-	private static final int NUM_ATTEMPTS = 10;
+	private double SIZE_THRESHOLD = .25;
+	
+	private int NUM_ATTEMPTS = 20;
 	
 	private BufferedImage _im, _imFF;
 	private BoundaryMap _bmap;
@@ -36,7 +36,7 @@ public class Extraktor
 	public static void main(String[] args)
 	{
 		Extraktor e = new Extraktor();
-		String d = System.getProperty("file.separator");
+/*		String d = System.getProperty("file.separator");
 		try
 		{
 			for (int i = 0; i < 20; i++)
@@ -47,12 +47,17 @@ public class Extraktor
 		catch (IOException ioe)
 		{
 			ioe.printStackTrace();
-		}
+		}*/
 	}
 	
 	public Extraktor()
 	{
 		_rand = new Random();
+		
+//		String d = System.getProperty("file.separator");
+//		BufferedImage e = getExtract("data" + d + "samples" + d	+ "cowboy.jpg");
+//		BufferedImage o = copyCenterOval(e);
+		
 	}
 	
 	public BufferedImage getExtract(String fname)
@@ -67,7 +72,6 @@ public class Extraktor
 			System.out.println("Can't read filename " + fname);
 			e.printStackTrace();
 		}
-		
 		return getRandomExtract();
 	}
 	
@@ -82,8 +86,7 @@ public class Extraktor
 	
 	private BufferedImage copyImage(BufferedImage b)
 	{
-		BufferedImage c = new BufferedImage(b.getWidth(), b.getHeight(),
-				BufferedImage.TYPE_INT_RGB);
+		BufferedImage c = new BufferedImage(b.getWidth(), b.getHeight(),b.getType());
 		c.setData(b.getData());
 		return c;
 	}
@@ -123,7 +126,8 @@ public class Extraktor
 		_bmap = new BoundaryMap(initPt);
 		
 		floodFill(copyImage(_imFF), Color.red, initPt, _bmap);
-		double gatherRatio = (double) _bmap.size()		/ (double) (_im.getWidth() * _im.getHeight());
+		double gatherRatio = (double) _bmap.size()
+				/ (double) (_im.getWidth() * _im.getHeight());
 		int numAttempts = 0;
 		
 		while ((gatherRatio < SIZE_THRESHOLD) && (numAttempts++ < NUM_ATTEMPTS))
@@ -140,7 +144,8 @@ public class Extraktor
 				_bmap = resMap;
 			}
 			
-			gatherRatio = (double) resMap.size() / (double) (_im.getWidth() * _im.getHeight());
+			gatherRatio = (double) resMap.size()
+					/ (double) (_im.getWidth() * _im.getHeight());
 		}
 		
 		BufferedImage imNew;
@@ -157,28 +162,6 @@ public class Extraktor
 		return imNew;
 	}
 	
-	private BufferedImage copyCenterOval(BufferedImage im) {
-		Ellipse2D e = new Ellipse2D.Double(0,0, im.getWidth()-1, im.getHeight()-1);
-		PathIterator pit = e.getPathIterator(null, .01);
-		  
-		double[] coords = new double[2];
-		  
-		while(!pit.isDone()) 
-		{
-			int t = pit.currentSegment(coords);
-			switch (t)
-			{
-	            case PathIterator.SEG_MOVETO:  // fall through
-	            case PathIterator.SEG_LINETO:
-	            case PathIterator.SEG_CLOSE: break;
-	            default:
-	                System.out.println("Unexpected type: " + t);
-			}
-		}
-		
-		return null;
-	}
-
 	private BufferedImage getPointExtract(Point p)
 	{
 		floodFill(_imFF, Color.red, p, _bmap);
@@ -215,6 +198,43 @@ public class Extraktor
 		return copyInto;
 	}
 	
+	private BufferedImage copyCenterOval(BufferedImage im)
+	{
+		
+		int w = im.getWidth();
+		int h = im.getHeight();
+		
+		BufferedImage imNew = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
+		Ellipse2D e = new Ellipse2D.Double(0,0,w,h);
+		
+		Graphics2D g = (Graphics2D)imNew.getGraphics();
+		paintEllipse(g,im);
+		
+		
+		return imNew;
+	}
+	
+	private void paintEllipse(Graphics2D g2, BufferedImage mImage)
+	{
+		RenderingHints hints = new RenderingHints(
+				RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+				
+		g2.setRenderingHints(hints);
+		
+		// Create a round rectangle.
+		Ellipse2D r = new Ellipse2D.Double(0,0, mImage.getWidth(), mImage.getHeight());
+		// Create a texture rectangle the same size as the texture image.
+		Rectangle2D tr = new Rectangle2D.Double(0, 0, mImage.getWidth(), mImage.getHeight());
+		g2.setPaint(Color.white);
+		g2.fill(tr);
+		// Create the TexturePaint.
+		TexturePaint tp = new TexturePaint(mImage, tr);
+		// Now fill the round rectangle.
+		g2.setPaint(tp);
+		g2.fill(r);
+	}
+
 	private BufferedImage copyPixelsToNew(BufferedImage im, BoundaryMap bm)
 	{
 		Point[] bounds = bm.getRectBounds();
@@ -363,12 +383,27 @@ public class Extraktor
 	// Returns true if RGBA arrays are equivalent, false otherwise
 	// Could use Arrays.equals(int[], int[]), but this is probably a little
 	// faster...
-	private static boolean isFuzzyEqRGB(int[] pix1, int[] pix2)
+	private boolean isFuzzyEqRGB(int[] pix1, int[] pix2)
 	{
 		double diff = Math.pow(pix1[0] - pix2[0], 2)
 				+ Math.pow(pix1[1] - pix2[1], 2)
 				+ Math.pow(pix1[2] - pix2[2], 2);
 		return (diff < COLOR_SPREAD_THRESHOLD);
+	}
+	
+	public void setColorSpreadThreshold(double cst)
+	{
+		COLOR_SPREAD_THRESHOLD = cst;
+	}
+
+	public void setSizeThreshold(double n)
+	{
+		SIZE_THRESHOLD = n;
+	}
+	
+	public void setNumAttemptsThreshold(int n)
+	{
+		NUM_ATTEMPTS = n;
 	}
 	
 	private class BoundaryMap
@@ -452,11 +487,12 @@ public class Extraktor
 			return _bPoints.get(x + "," + y);
 		}
 		
-		public HashMap<Integer,Point> getBounds()
+		public HashMap<Integer, Point> getBounds()
 		{
-			HashMap<Integer,Point> bounds = new HashMap<Integer, Point>();
+			HashMap<Integer, Point> bounds = new HashMap<Integer, Point>();
 			
-			for (Iterator<Point> it = _bPoints.values().iterator(); it.hasNext(); )
+			for (Iterator<Point> it = _bPoints.values().iterator(); it
+					.hasNext();)
 			{
 				Point pt = it.next();
 				if (bounds.containsKey(new Integer(pt.y)))
