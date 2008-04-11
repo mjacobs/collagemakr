@@ -6,7 +6,7 @@ public class CompositeXorOperation extends ParametrizedCompositeOperation {
 
 	static
 	{
-		OperationMetadata.getInstance().registerOperation(CompositeXorOperation.class).lockDown();
+		OperationMetadata.getInstance().registerOperation(CompositeXorOperation.class);
 	}
 	
 	public CompositeXorOperation()

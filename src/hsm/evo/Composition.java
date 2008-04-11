@@ -113,7 +113,7 @@ public class Composition {
 				0.0
 		};
 		
-		return new Composition(randomNode(3, new GenerationContext(), 
+		return new Composition(randomNode(4, new GenerationContext(), 
 									new GenerationParameters(typs, probs)));
 	}
 	
@@ -201,11 +201,16 @@ public class Composition {
 		case FEATURE_LEAF:
 			AnnotatedImage randImage = null;
 			BufferedImage extractedImage = null;
+			
+			System.out.print("Making leaf... ");
+			
 			while (extractedImage == null)
 			{
 				randImage = ctx.getSource().getRandomImage();
 				extractedImage = ctx.getExtractor().getExtract(randImage.getImage());
 			}
+			
+			System.out.println("done.");
 			
 			return new ElementNode(extractedImage, randImage);
 		

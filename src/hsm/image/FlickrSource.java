@@ -115,12 +115,23 @@ public class FlickrSource implements ImageSource {
 
 	
 	public AnnotatedImage getRandomImage() {
+		AnnotatedImage img = null;
+		
+		while (img == null)
+		{
+			img = getRandomImageHelper();
+		}
+		
+		return img;
+	}
+	
+	public AnnotatedImage getRandomImageHelper() {
 		// select random photo from the cached results
 		int whichOne = _rand.nextInt(_photoPool.size());
 		
 		try {
 			return getFlickrImage(_photoPool.get(whichOne), _flickr);
-		} catch (ImageException e) {
+		} catch (Throwable e) {
 			return null;
 		}
 	}

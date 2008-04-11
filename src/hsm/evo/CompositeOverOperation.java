@@ -6,7 +6,7 @@ public class CompositeOverOperation extends ParametrizedCompositeOperation {
 
 	static
 	{
-		OperationMetadata.getInstance().registerOperation(CompositeOverOperation.class).lockDown();
+		OperationMetadata.getInstance().registerOperation(CompositeOverOperation.class);
 	}
 	
 	public CompositeOverOperation()
