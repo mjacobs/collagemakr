@@ -20,6 +20,11 @@ public class Composition {
 		_cachedImage = null;
 	}
 	
+	public ExpressionNode getRoot()
+	{
+		return _root;
+	}
+	
 	public BufferedImage getImage()
 	{
 		if (_cachedImage == null)
