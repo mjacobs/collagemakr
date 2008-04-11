@@ -13,9 +13,9 @@ import java.util.Random;
 public class Extraktor
 {
 	
-	private final static double COLOR_SPREAD_THRESHOLD = 3000;
-	private final static double SIZE_THRESHOLD = .25;	
-	private final static int NUM_ATTEMPTS = 20;
+	private final static double COLOR_SPREAD_THRESHOLD = 3500;
+	private final static double SIZE_THRESHOLD = .1;	
+	private final static int NUM_ATTEMPTS = 5;
 	
 	private Random _rand;
 	
