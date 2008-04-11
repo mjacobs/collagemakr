@@ -17,7 +17,6 @@ public final class OperationMetadata {
 			public double max = 1;
 		}
 		
-		private boolean _mutable = true;
 		private HashMap<String, Range> _data;
 		
 		public PropertyData()
@@ -28,15 +27,7 @@ public final class OperationMetadata {
 		
 		public void putProperty(String name, double min, double max)
 		{
-			if (_mutable)
-			{
-				_data.put(name, new Range(min, max));
-			}
-		}
-		
-		public void lockDown()
-		{
-			_mutable = false;
+			_data.put(name, new Range(min, max));
 		}
 		
 		public String[] getPropertyNames()
@@ -76,6 +67,9 @@ public final class OperationMetadata {
 				Class.forName ("hsm.evo.DissolveOperation");
 				Class.forName ("hsm.evo.CompositeOverOperation");
 				Class.forName ("hsm.evo.CompositeXorOperation");
+				Class.forName ("hsm.evo.TranslateOperation");
+				Class.forName ("hsm.evo.ScaleOperation");
+				Class.forName ("hsm.evo.RotateOperation");
 			} catch (ClassNotFoundException e) {
 			}
 		}
