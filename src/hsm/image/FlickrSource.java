@@ -135,6 +135,7 @@ public class FlickrSource implements ImageSource {
 	private AnnotatedImage getFlickrImage(Photo p, Flickr flickr) throws ImageException {
 
 		return new AnnotatedImage(loadImage(p, flickr.getPhotosInterface()), 
+									p.getTitle(),
 									loadOwner(p,  flickr.getPeopleInterface()), 
 									loadTags(p, flickr.getTagsInterface()));
 	}

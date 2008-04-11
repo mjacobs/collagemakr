@@ -36,7 +36,7 @@ public class ElementNode extends ExpressionNode {
 	
 	public void print(String indent)
 	{
-		System.out.println(indent + "leaf image by " + _source.getOwner());
+		System.out.println(indent + "leaf image " + _source.getTitle());
 	}
 	
 }

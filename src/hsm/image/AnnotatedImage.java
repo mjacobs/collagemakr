@@ -10,14 +10,21 @@ public class AnnotatedImage {
 	protected Set<String> _tags;
 	protected String _owner;
 	protected BufferedImage _image;
+	protected String _title;
 	
-	public AnnotatedImage(BufferedImage img, String owner, Collection<String> tags)
+	public AnnotatedImage(BufferedImage img, String title, String owner, Collection<String> tags)
 	{
 		_image = img;
 		_tags = new HashSet<String>(tags);
 		_owner = owner;
+		_title = title;
 	}
 
+	public String getTitle()
+	{
+		return _title;
+	}
+	
 	public String getOwner() {
 		return _owner;
 	}

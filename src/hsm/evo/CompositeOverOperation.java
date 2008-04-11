@@ -1,30 +1,21 @@
 package hsm.evo;
 
-import hsm.image.CompositeAdaptor;
-import hsm.image.LayerImage;
+import java.awt.AlphaComposite;
 
-public class CompositeOverOperation extends ParametrizedOperation {
+public class CompositeOverOperation extends ParametrizedCompositeOperation {
 
 	static
 	{
 		OperationMetadata.getInstance().registerOperation(CompositeOverOperation.class).lockDown();
 	}
 	
-	private CompositeAdaptor _comp;
-	
 	public CompositeOverOperation()
 	{
-		_comp = new CompositeAdaptor();
+		super(AlphaComposite.SrcOver);
 	}
 	
-	@Override
-	public int getNumberOfInputs() {
-		return _comp.getNumberOfInputs();
+	public String toString()
+	{
+		return "Composite (over)";
 	}
-
-	@Override
-	protected LayerImage performInternal(LayerImage... images) {
-		return _comp.perform(images);
-	}
-
 }
