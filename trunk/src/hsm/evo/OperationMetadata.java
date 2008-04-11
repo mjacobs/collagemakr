@@ -75,6 +75,7 @@ public final class OperationMetadata {
 			try {
 				Class.forName ("hsm.evo.DissolveOperation");
 				Class.forName ("hsm.evo.CompositeOverOperation");
+				Class.forName ("hsm.evo.CompositeXorOperation");
 			} catch (ClassNotFoundException e) {
 			}
 		}

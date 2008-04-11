@@ -43,10 +43,10 @@ public class OperationNode extends ExpressionNode {
 	
 	public void print(String indent)
 	{
-		System.out.println(indent + "Operation node " + _operation);
+		System.out.println(indent + _operation);
 		for (ExpressionNode child : _children)
 		{
-			child.print(indent + "  ");
+			child.print(indent + "---");
 		}
 	}
 
