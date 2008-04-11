@@ -199,9 +199,15 @@ public class Composition {
 			return new OperationNode(op, children);
 				
 		case FEATURE_LEAF:
-			AnnotatedImage randImage = ctx.getSource().getRandomImage();
+			AnnotatedImage randImage = null;
+			BufferedImage extractedImage = null;
+			while (extractedImage == null)
+			{
+				randImage = ctx.getSource().getRandomImage();
+				extractedImage = ctx.getExtractor().getExtract(randImage.getImage());
+			}
 			
-			return new ElementNode(ctx.getExtractor().getExtract(randImage.getImage()), randImage);
+			return new ElementNode(extractedImage, randImage);
 		
 		default:
 			assert(false);

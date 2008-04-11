@@ -1,237 +1,84 @@
 package hsm.tools;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.TexturePaint;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
-
 public class Extraktor
 {
 	
-	private double COLOR_SPREAD_THRESHOLD = 3000;
+	private final static double COLOR_SPREAD_THRESHOLD = 3000;
+	private final static double SIZE_THRESHOLD = .25;	
+	private final static int NUM_ATTEMPTS = 20;
 	
-	private double SIZE_THRESHOLD = .25;
-	
-	private int NUM_ATTEMPTS = 20;
-	
-	private BufferedImage _im, _imFF;
-	private BoundaryMap _bmap;
 	private Random _rand;
 	
-	public static void main(String[] args)
-	{
-		Extraktor e = new Extraktor();
-/*		String d = System.getProperty("file.separator");
-		try
-		{
-			for (int i = 0; i < 20; i++)
-				writeImage(e.getExtract("data" + d + "samples" + d
-						+ "cowboy.jpg"), "data" + d + "output" + d + "extract"
-						+ i + ".jpg");
-		}
-		catch (IOException ioe)
-		{
-			ioe.printStackTrace();
-		}*/
-	}
-	
+		
 	public Extraktor()
 	{
-		_rand = new Random();
+		_rand = new Random();		
+	}
 		
-		String d = System.getProperty("file.separator");
-		BufferedImage e = getExtract("data" + d + "samples" + d	+ "cowboy.jpg");
-		BufferedImage o = copyCenterOval(e);
-		
+	public BufferedImage getExtract(BufferedImage bImage)
+	{
+		return getRandomExtract(bImage);
 	}
 	
-	public BufferedImage getExtract(String fname)
+	private BufferedImage copyImage(BufferedImage bImage)
 	{
-		try
-		{
-			_im = ImageIO.read(new File(fname));
-			_imFF = ImageIO.read(new File(fname));
-		}
-		catch (IOException e)
-		{
-			System.out.println("Can't read filename " + fname);
-			e.printStackTrace();
-		}
-		return getRandomExtract();
+		BufferedImage newImage = new BufferedImage(bImage.getWidth(), bImage.getHeight(),bImage.getType());
+		newImage.setData(bImage.getData());
+		return newImage;
 	}
 	
-	public BufferedImage getExtract(BufferedImage b)
+	private int getGaussianRand(int maxValue)
 	{
-		_im = b;
-		
-		_imFF = copyImage(b);
-		
-		return getRandomExtract();
+		double gaussianDouble = Math.abs(_rand.nextGaussian() / 3.0);
+		gaussianDouble = gaussianDouble >= 1 ? .99 : gaussianDouble;
+		return (int)Math.floor(gaussianDouble * maxValue);
 	}
 	
-	private BufferedImage copyImage(BufferedImage b)
+	private BufferedImage getRandomExtract(BufferedImage bImage)
 	{
-		BufferedImage c = new BufferedImage(b.getWidth(), b.getHeight(),b.getType());
-		c.setData(b.getData());
-		return c;
-	}
-	
-	public BufferedImage getExtract(BufferedImage b, Point p)
-	{
-		_im = b;
+		Point initPt = new Point(getGaussianRand(bImage.getWidth()), getGaussianRand(bImage.getHeight()));
+		BoundaryMap boundaryMap = new BoundaryMap(initPt);
 		
-		_imFF = new BufferedImage(_im.getWidth(), _im.getHeight(),
-				BufferedImage.TYPE_INT_RGB);
-		_imFF.setData(_im.getData());
+		floodFill(copyImage(bImage), Color.red, initPt, boundaryMap);
 		
-		return getPointExtract(p);
-	}
-	
-	public BufferedImage getRandomExtract(BufferedImage b, BufferedImage back,
-			Point p)
-	{
-		_im = b;
+		double gatherRatio = (double) boundaryMap.size()
+				/ (double) (bImage.getWidth() * bImage.getHeight());
 		
-		_imFF = copyImage(b);
-		
-		Point initPt = new Point(_rand.nextInt(_im.getWidth()), _rand
-				.nextInt(_im.getHeight()));
-		_bmap = new BoundaryMap(initPt);
-		floodFill(_imFF, Color.red, initPt, _bmap);
-		
-		BufferedImage imNew = copyPixelsInto(_im, back, p, _bmap);
-		
-		return imNew;
-	}
-	
-	private BufferedImage getRandomExtract()
-	{
-		Point initPt = new Point(_rand.nextInt(_im.getWidth()), _rand
-				.nextInt(_im.getHeight()));
-		_bmap = new BoundaryMap(initPt);
-		
-		floodFill(copyImage(_imFF), Color.red, initPt, _bmap);
-		double gatherRatio = (double) _bmap.size()
-				/ (double) (_im.getWidth() * _im.getHeight());
 		int numAttempts = 0;
 		
 		while ((gatherRatio < SIZE_THRESHOLD) && (numAttempts++ < NUM_ATTEMPTS))
 		{
-			System.out.println(gatherRatio);
-			
-			initPt = new Point(_rand.nextInt(_im.getWidth()), _rand.nextInt(_im
-					.getHeight()));
+			initPt = new Point(getGaussianRand(bImage.getWidth()), getGaussianRand(bImage.getHeight()));
 			BoundaryMap resMap = new BoundaryMap(initPt);
-			floodFill(copyImage(_imFF), Color.red, initPt, resMap);
+			floodFill(copyImage(bImage), Color.red, initPt, resMap);
 			
-			if (resMap.size() > _bmap.size())
+			if (resMap.size() > boundaryMap.size())
 			{
-				_bmap = resMap;
+				boundaryMap = resMap;
 			}
 			
 			gatherRatio = (double) resMap.size()
-					/ (double) (_im.getWidth() * _im.getHeight());
+					/ (double) (bImage.getWidth() * bImage.getHeight());
 		}
-		
-		BufferedImage imNew;
 		
 		if (numAttempts >= NUM_ATTEMPTS)
 		{
-			imNew = copyCenterOval(_im);
+			return null;
 		}
 		else
 		{
-			imNew = copyPixelsToNew(_im, _bmap);
+			return copyPixelsToNew(bImage, boundaryMap);
 		}
-		
-		return imNew;
-	}
-	
-	private BufferedImage getPointExtract(Point p)
-	{
-		floodFill(_imFF, Color.red, p, _bmap);
-		
-		BufferedImage imNew = copyPixelsToNew(_im, _bmap);
-		
-		return imNew;
-	}
-	
-	private BufferedImage copyPixelsInto(BufferedImage im,
-			BufferedImage copyInto, Point pt, BoundaryMap bm)
-	{
-		Point[] bounds = bm.getRectBounds();
-		
-		int w = bounds[1].x - bounds[0].x + 1;
-		int h = bounds[1].y - bounds[0].y + 1;
-		
-		Collection<Point> ptsToCopy = bm.getPoints().values();
-		
-		// Gets the pixel which is the center of this extract in the original
-		// image
-		Point c = bm.getCenter();
-		int cX = -bounds[0].x + pt.x;
-		int cY = -bounds[0].y + pt.y;
-		
-		for (Iterator<Point> i = ptsToCopy.iterator(); i.hasNext();)
-		{
-			Point ptIt = i.next();
-			copyInto.setRGB(Math.min(cX + ptIt.x, copyInto.getWidth()), Math
-					.min(cY + ptIt.y, copyInto.getHeight()), im.getRGB(c.x
-					+ ptIt.x, c.y + ptIt.y));
-		}
-		
-		return copyInto;
-	}
-	
-	private BufferedImage copyCenterOval(BufferedImage im)
-	{
-		
-		int w = im.getWidth();
-		int h = im.getHeight();
-		
-		BufferedImage imNew = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
-		Ellipse2D e = new Ellipse2D.Double(0,0,w,h);
-		
-		Graphics2D g = (Graphics2D)imNew.getGraphics();
-		paintEllipse(g,im);
-		
-		return imNew;
-	}
-	
-	private void paintEllipse(Graphics2D g2, BufferedImage mImage)
-	{
-		RenderingHints hints = new RenderingHints(
-				RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-				
-		g2.setRenderingHints(hints);
-		// Create a round rectangle.
-		Ellipse2D r = new Ellipse2D.Double(0,0, mImage.getWidth(), mImage.getHeight());
-		// Create a texture rectangle the same size as the texture image.
-		Rectangle2D tr = new Rectangle2D.Double(0, 0, mImage.getWidth(), mImage.getHeight());
-		//g2.setPaint(Color.black);
-		//g2.fill(tr);
-		// Create the TexturePaint.
-		TexturePaint tp = new TexturePaint(mImage, tr);
-		// Now fill the round rectangle.
-		g2.setPaint(tp);
-		g2.fill(r);
 	}
 
 	private BufferedImage copyPixelsToNew(BufferedImage im, BoundaryMap bm)
@@ -261,34 +108,6 @@ public class Extraktor
 		}
 		
 		return imNew;
-	}
-	
-	private static void writeImage(BufferedImage toWrite, String fileout)
-			throws IOException
-	{
-		
-		// The output file
-		File f = new File(fileout);
-		
-		// Gets the output format based on the file extention
-		String ext = fileout.substring(fileout.length() - 3, fileout.length());
-		String filetype = "jpeg";
-		if (ext.equalsIgnoreCase("jpg"))
-		{
-			filetype = "jpeg";
-		}
-		else if (ext.equalsIgnoreCase("gif"))
-		{
-			filetype = "gif";
-		}
-		else if (ext.equalsIgnoreCase("png"))
-		{
-			filetype = "png";
-		}
-		
-		// Writes the file
-		ImageIO.write(toWrite, filetype, f);
-		
 	}
 	
 	/**
@@ -332,12 +151,8 @@ public class Extraktor
 		LinkedList<Point> q = new LinkedList<Point>();
 		q.add(new Point(x, y));
 		
-		Rectangle bounds = raster.getBounds();
+		int[] aux = { 255, 255, 255, 255 };
 		
-		int[] aux =
-		{ 255, 255, 255, 255 };
-		
-		Point w, e;
 		while (!q.isEmpty())
 		{
 			Point p = q.removeFirst();
@@ -398,21 +213,6 @@ public class Extraktor
         n >>= 8;
         return n;
     }
-	
-	public void setColorSpreadThreshold(double cst)
-	{
-		COLOR_SPREAD_THRESHOLD = cst;
-	}
-
-	public void setSizeThreshold(double n)
-	{
-		SIZE_THRESHOLD = n;
-	}
-	
-	public void setNumAttemptsThreshold(int n)
-	{
-		NUM_ATTEMPTS = n;
-	}
 	
 	private class BoundaryMap
 	{
