@@ -1,14 +1,14 @@
-package hsm.image;
+package hsm.evo;
 
+import hsm.evo.OperationMetadata.PropertyData;
+import hsm.image.AnnotatedImage;
+import hsm.image.FlickrSource;
+import hsm.image.ImageException;
+import hsm.image.ImageSource;
 import hsm.tools.Extraktor;
 
-import java.awt.AlphaComposite;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
-
-import com.jhlabs.image.OpacityFilter;
 
 public class Composition {
 	private ExpressionNode _root;
@@ -28,6 +28,11 @@ public class Composition {
 		}
 		
 		return _cachedImage;
+	}
+	
+	public void printTree()
+	{
+		_root.print();
 	}
 	
 	private static class GenerationContext
@@ -58,13 +63,8 @@ public class Composition {
 	}
 	
 	private static enum NodeType {
-		COMPOSITE_OVER,
-		COMPOSITE_XOR,
-		DISSOLVE,
-		FEATURE_LEAF,
-		ROTATE,
-		TRANSLATE,
-		SCALE
+		OPERATION,
+		FEATURE_LEAF
 	}
 
 	private static class GenerationParameters
@@ -105,21 +105,11 @@ public class Composition {
 	public static Composition makeRandomComposition()
 	{
 		NodeType[] typs = {
-				NodeType.COMPOSITE_OVER,
-				NodeType.COMPOSITE_XOR,
-				NodeType.DISSOLVE,
-				NodeType.ROTATE,
-				NodeType.TRANSLATE,
-				NodeType.SCALE,
+				NodeType.OPERATION,
 				NodeType.FEATURE_LEAF};
 		
 		double[] probs = {
-				0.2,
-				0.2,
-				0.1,
-				0.0,
-				0.4,
-				0.2,
+				1.0,
 				0.0
 		};
 		
@@ -141,6 +131,34 @@ public class Composition {
 		return type;
 	}
 	
+	
+	private static Class<?> randomOperationClass()
+	{
+		Class<?>[] classes = OperationMetadata.getInstance().getOperationClasses();
+		
+		return classes[(int)Math.floor(Math.random()*classes.length)];
+	}
+	
+	private static HashMap<String, Double> randomParametersForClass(Class<?> c)
+	{
+		PropertyData props = OperationMetadata.getInstance().getPropertyData(c);
+		HashMap<String, Double> result = new HashMap<String, Double>();
+		double randValue;
+		double max;
+		double min;
+		
+		for (String propName : props.getPropertyNames())
+		{
+			max = props.getMaximum(propName);
+			min = props.getMinimum(propName);
+			randValue = min + Math.random()*(max-min);
+			
+			result.put(propName, randValue);
+		}
+		
+		return result;
+	}
+	
 	private static ExpressionNode randomNode(int maxDepth, GenerationContext ctx, GenerationParameters params)
 	{
 		NodeType type;
@@ -156,40 +174,34 @@ public class Composition {
 		
 		switch(type)
 		{
-		case COMPOSITE_OVER:
-			return new OperationNode(new CompositeAdaptor(AlphaComposite.SrcOver), randomNode(maxDepth-1, ctx, params), randomNode(maxDepth-1, ctx, params));
+		case OPERATION:
+			Class<?> opClass = randomOperationClass();
+			ParametrizedOperation op = null;
+			try {
+					op = (ParametrizedOperation)opClass.newInstance();
+					op.initWithParameters(randomParametersForClass(opClass));
+					
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			ExpressionNode[] children = new ExpressionNode[op.getNumberOfInputs()];
 			
-		case COMPOSITE_XOR:
-			return new OperationNode(new CompositeAdaptor(AlphaComposite.Xor), randomNode(maxDepth-1, ctx, params), randomNode(maxDepth-1, ctx, params));
-			
-		case DISSOLVE:
-			return new OperationNode(new BufferedImageOpAdaptor(new OpacityFilter((int)Math.round(Math.random()*0.8*256))), randomNode(maxDepth-1, ctx, params));
-			
-		case ROTATE:
-		case TRANSLATE:
-		case SCALE:
-			AffineTransform af = null;
-			
-			switch (type)
+			for (int i=0; i<children.length; i++)
 			{
-			case ROTATE:
-				af = AffineTransform.getRotateInstance(Math.random()*2.0*Math.PI);
-				break;
-				
-			case TRANSLATE:
-				af = AffineTransform.getTranslateInstance(Math.random()*500, Math.random()*500);
-				break;
-				
-			case SCALE:
-				af = AffineTransform.getScaleInstance(Math.random()*1.5 + 0.5, Math.random()*1.5 + 0.5);
-				break;
-				
+				children[i] = randomNode(maxDepth-1, ctx, params);
 			}
 			
-			return new OperationNode(new BufferedImageOpAdaptor(new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR)), randomNode(maxDepth-1, ctx, params));
-			
+			return new OperationNode(op, children);
+				
 		case FEATURE_LEAF:
-			return new ElementNode(ctx.getExtractor().getExtract(ctx.getSource().getRandomImage().getImage()));
+			AnnotatedImage randImage = ctx.getSource().getRandomImage();
+			
+			return new ElementNode(ctx.getExtractor().getExtract(randImage.getImage()), randImage);
 		
 		default:
 			assert(false);

@@ -28,7 +28,7 @@ public class CompositeAdaptor extends ImageOperation {
 	}
 	
 	@Override
-	int getNumberOfInputs() {
+	public int getNumberOfInputs() {
 		return 2;
 	}
 

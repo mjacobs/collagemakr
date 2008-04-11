@@ -13,7 +13,7 @@ public class BufferedImageOpAdaptor extends ImageOperation {
 	}
 	
 	@Override
-	int getNumberOfInputs() {
+	public int getNumberOfInputs() {
 		return 1;
 	}
 

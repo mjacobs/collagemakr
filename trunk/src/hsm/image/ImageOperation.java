@@ -1,7 +1,7 @@
 package hsm.image;
 
 public abstract class ImageOperation {
-	abstract int getNumberOfInputs();
+	public abstract int getNumberOfInputs();
 	
 	public LayerImage perform(LayerImage... images)
 	{
