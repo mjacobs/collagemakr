@@ -1,6 +1,6 @@
 package hsm.test;
 
-import hsm.image.Composition;
+import hsm.evo.Composition;
 import hsm.image.ImageException;
 
 import java.awt.Graphics;
@@ -27,7 +27,9 @@ public class CompositionTestApp {
 		
 		public void setComposition(Composition comp)
 		{
+			
 			_composition = comp;
+			_composition.printTree();
 			repaint();
 		}
 		
