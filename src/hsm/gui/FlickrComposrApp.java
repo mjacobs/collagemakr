@@ -1,5 +1,7 @@
 package hsm.gui;
 
+import hsm.evo.Organism;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -26,45 +28,26 @@ import java.awt.Dimension;
 
 public class FlickrComposrApp
 {
-
+	private StateController sController = null;
 	private JFrame jFrame = null;
-
 	private JPanel jContentPane = null;
-
 	private JMenuBar jJMenuBar = null;
-
 	private JMenu fileMenu = null;
-
 	private JMenu helpMenu = null;
-
 	private JMenuItem exitMenuItem = null;
-
 	private JMenuItem aboutMenuItem = null;
-
 	private JDialog aboutDialog = null;
-
 	private JPanel aboutContentPane = null;
-
 	private JLabel aboutVersionLabel = null;
-
 	private JLabel makrTitle = null;
-
 	private JPanel insidePanel = null;
-
 	private JLabel im1label = null;
-
 	private JLabel im2label = null;
-
-	private BufferedImage im1 = getBlankImage();
-
-	private BufferedImage im2 = getBlankImage();
-
+	private BufferedImage im1 = null;
+	private BufferedImage im2 = null;
 	private JPanel lPanel = null;
-
 	private JPanel rPanel = null;
-
 	private JButton im2Button = null;
-
 	private JButton im1Button = null;
 
 	/**
@@ -77,7 +60,7 @@ public class FlickrComposrApp
 		if (lPanel == null)
 		{
 			lPanel = new JPanel();
-			im1label = new JLabel(new ImageIcon(getIm1()));
+			im1label = new JLabel(new ImageIcon(getBlankImage()));
 			lPanel.setLayout(new BoxLayout(getLPanel(), BoxLayout.Y_AXIS));
 			lPanel.add(getCenteredPanel(im1label), null);
 			lPanel.add(getCenteredPanel(getIm1Button()), null);
@@ -95,7 +78,7 @@ public class FlickrComposrApp
 		if (rPanel == null)
 		{
 			rPanel = new JPanel();
-			im2label = new JLabel(new ImageIcon(getIm2()));
+			im2label = new JLabel(new ImageIcon(getBlankImage()));
 			rPanel.setLayout(new BoxLayout(getRPanel(), BoxLayout.Y_AXIS));
 			rPanel.add(getCenteredPanel(im2label), null);
 			rPanel.add(getCenteredPanel(getIm2Button()), null);
@@ -142,26 +125,10 @@ public class FlickrComposrApp
 		if (im1Button == null)
 		{
 			im1Button = new JButton();
-			//im1Button.addActionListener(new )
+			// im1Button.addActionListener(new )
 			im1Button.setText("chooz plz!");
 		}
 		return im1Button;
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args)
-	{
-		// TODO Auto-generated method stub
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				FlickrComposrApp application = new FlickrComposrApp();
-				application.getJFrame().setVisible(true);
-			}
-		});
 	}
 
 	/**
@@ -169,16 +136,20 @@ public class FlickrComposrApp
 	 * 
 	 * @return javax.swing.JFrame
 	 */
-	public JFrame getJFrame()
+	private JFrame getJFrame()
 	{
 		if (jFrame == null)
-		{
+		{			
 			jFrame = new JFrame();
 			jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			jFrame.setJMenuBar(getJJMenuBar());
 			jFrame.setSize(800, 600);
 			jFrame.setContentPane(getJContentPane());
 			jFrame.setTitle("Application");
+			
+
+			if (sController == null)
+				sController = new StateController(this);
 		}
 		return jFrame;
 	}
@@ -266,6 +237,7 @@ public class FlickrComposrApp
 			exitMenuItem.setText("Exit");
 			exitMenuItem.addActionListener(new ActionListener()
 			{
+
 				public void actionPerformed(ActionEvent e)
 				{
 					System.exit(0);
@@ -288,6 +260,7 @@ public class FlickrComposrApp
 			aboutMenuItem.setText("About");
 			aboutMenuItem.addActionListener(new ActionListener()
 			{
+
 				public void actionPerformed(ActionEvent e)
 				{
 					JDialog aboutDialog = getAboutDialog();
@@ -359,7 +332,6 @@ public class FlickrComposrApp
 	{
 		if (insidePanel == null)
 		{
-
 			GridLayout gridLayout = new GridLayout();
 			gridLayout.setRows(1);
 			gridLayout.setColumns(2);
@@ -367,7 +339,6 @@ public class FlickrComposrApp
 			insidePanel.setLayout(gridLayout);
 			insidePanel.add(getLPanel(), null);
 			insidePanel.add(getRPanel(), null);
-
 		}
 		return insidePanel;
 	}
@@ -382,19 +353,60 @@ public class FlickrComposrApp
 		this.im1 = im1;
 	}
 
-	public BufferedImage getIm1()
-	{
-		return im1;
-	}
-
 	public void setIm2(BufferedImage im2)
 	{
 		this.im2 = im2;
 	}
-
-	public BufferedImage getIm2()
+	
+	public void addActListener1(ActionListener al)
 	{
-		return im2;
+		this.im1Button.addActionListener(al);
+	}
+	
+	public void addActListener2(ActionListener al)
+	{
+		this.im2Button.addActionListener(al);
+	}
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args)
+	{
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				FlickrComposrApp application = new FlickrComposrApp();
+				application.getJFrame().setVisible(true);
+			}
+		});
+	}
+
+	public void setIms(BufferedImage[] bufferedImages) throws MakrGUIException
+	{
+		if (bufferedImages.length == 2)
+		{
+			this.im1 = bufferedImages[0];
+			this.im2 = bufferedImages[1];
+		}
+		else
+		{
+			throw new MakrGUIException("Incorrect number of images attempted to be set.");
+		}
+	}
+
+	public void addActListeners(ActionListener[] actionListeners) throws MakrGUIException
+	{
+		if (actionListeners.length == 2)
+		{
+			im1Button.addActionListener(actionListeners[0]);
+			im1Button.addActionListener(actionListeners[1]);
+		}
+		else
+		{
+			throw new MakrGUIException("Incorrect number of ActionListeners attempted to be set.");
+		}
 	}
 
 }
