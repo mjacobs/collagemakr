@@ -24,7 +24,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import java.awt.Dimension;
 
-public class FlickrComposrApp {
+public class FlickrComposrApp
+{
 
 	private JFrame jFrame = null;
 
@@ -45,17 +46,19 @@ public class FlickrComposrApp {
 	private JPanel aboutContentPane = null;
 
 	private JLabel aboutVersionLabel = null;
-	
+
 	private JLabel makrTitle = null;
 
 	private JPanel insidePanel = null;
 
 	private JLabel im1label = null;
+
 	private JLabel im2label = null;
 
 	private BufferedImage im1 = getBlankImage();
+
 	private BufferedImage im2 = getBlankImage();
-	
+
 	private JPanel lPanel = null;
 
 	private JPanel rPanel = null;
@@ -64,14 +67,15 @@ public class FlickrComposrApp {
 
 	private JButton im1Button = null;
 
-
 	/**
-	 * This method initializes lPanel	
-	 * 	
-	 * @return javax.swing.JPanel	
+	 * This method initializes lPanel
+	 * 
+	 * @return javax.swing.JPanel
 	 */
-	private JPanel getLPanel() {
-		if (lPanel == null) {
+	private JPanel getLPanel()
+	{
+		if (lPanel == null)
+		{
 			lPanel = new JPanel();
 			im1label = new JLabel(new ImageIcon(getIm1()));
 			lPanel.setLayout(new BoxLayout(getLPanel(), BoxLayout.Y_AXIS));
@@ -82,12 +86,14 @@ public class FlickrComposrApp {
 	}
 
 	/**
-	 * This method initializes rPanel	
-	 * 	
-	 * @return javax.swing.JPanel	
+	 * This method initializes rPanel
+	 * 
+	 * @return javax.swing.JPanel
 	 */
-	private JPanel getRPanel() {
-		if (rPanel == null) {
+	private JPanel getRPanel()
+	{
+		if (rPanel == null)
+		{
 			rPanel = new JPanel();
 			im2label = new JLabel(new ImageIcon(getIm2()));
 			rPanel.setLayout(new BoxLayout(getRPanel(), BoxLayout.Y_AXIS));
@@ -96,7 +102,7 @@ public class FlickrComposrApp {
 		}
 		return rPanel;
 	}
-	
+
 	private JPanel getCenteredPanel(Component c)
 	{
 		JPanel p = getCenteredPanel();
@@ -104,20 +110,22 @@ public class FlickrComposrApp {
 		return p;
 	}
 
-	private JPanel getCenteredPanel() {
+	private JPanel getCenteredPanel()
+	{
 		JPanel cPanel = new JPanel();
 		cPanel.setLayout(new BoxLayout(cPanel, BoxLayout.X_AXIS));
 		return cPanel;
 	}
-	
 
 	/**
-	 * This method initializes im2Button	
-	 * 	
-	 * @return javax.swing.JButton	
+	 * This method initializes im2Button
+	 * 
+	 * @return javax.swing.JButton
 	 */
-	private JButton getIm2Button() {
-		if (im2Button == null) {
+	private JButton getIm2Button()
+	{
+		if (im2Button == null)
+		{
 			im2Button = new JButton();
 			im2Button.setText("chooz plz!");
 		}
@@ -125,13 +133,16 @@ public class FlickrComposrApp {
 	}
 
 	/**
-	 * This method initializes im1Button	
-	 * 	
-	 * @return javax.swing.JButton	
+	 * This method initializes im1Button
+	 * 
+	 * @return javax.swing.JButton
 	 */
-	private JButton getIm1Button() {
-		if (im1Button == null) {
+	private JButton getIm1Button()
+	{
+		if (im1Button == null)
+		{
 			im1Button = new JButton();
+			//im1Button.addActionListener(new )
 			im1Button.setText("chooz plz!");
 		}
 		return im1Button;
@@ -140,10 +151,13 @@ public class FlickrComposrApp {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		// TODO Auto-generated method stub
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
 				FlickrComposrApp application = new FlickrComposrApp();
 				application.getJFrame().setVisible(true);
 			}
@@ -155,8 +169,10 @@ public class FlickrComposrApp {
 	 * 
 	 * @return javax.swing.JFrame
 	 */
-	public JFrame getJFrame() {
-		if (jFrame == null) {
+	public JFrame getJFrame()
+	{
+		if (jFrame == null)
+		{
 			jFrame = new JFrame();
 			jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			jFrame.setJMenuBar(getJJMenuBar());
@@ -172,11 +188,13 @@ public class FlickrComposrApp {
 	 * 
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJContentPane() {
-		if (jContentPane == null) {
+	private JPanel getJContentPane()
+	{
+		if (jContentPane == null)
+		{
 			makrTitle = new JLabel();
 			makrTitle.setText("flickr image composr!!!11");
-			makrTitle.setFont(new Font("Impact",0,40));
+			makrTitle.setFont(new Font("Impact", 0, 40));
 			makrTitle.setPreferredSize(new Dimension(232, 80));
 			makrTitle.setHorizontalAlignment(JLabel.CENTER);
 			jContentPane = new JPanel();
@@ -188,12 +206,14 @@ public class FlickrComposrApp {
 	}
 
 	/**
-	 * This method initializes jJMenuBar	
-	 * 	
-	 * @return javax.swing.JMenuBar	
+	 * This method initializes jJMenuBar
+	 * 
+	 * @return javax.swing.JMenuBar
 	 */
-	private JMenuBar getJJMenuBar() {
-		if (jJMenuBar == null) {
+	private JMenuBar getJJMenuBar()
+	{
+		if (jJMenuBar == null)
+		{
 			jJMenuBar = new JMenuBar();
 			jJMenuBar.add(getFileMenu());
 			jJMenuBar.add(getHelpMenu());
@@ -202,12 +222,14 @@ public class FlickrComposrApp {
 	}
 
 	/**
-	 * This method initializes jMenu	
-	 * 	
-	 * @return javax.swing.JMenu	
+	 * This method initializes jMenu
+	 * 
+	 * @return javax.swing.JMenu
 	 */
-	private JMenu getFileMenu() {
-		if (fileMenu == null) {
+	private JMenu getFileMenu()
+	{
+		if (fileMenu == null)
+		{
 			fileMenu = new JMenu();
 			fileMenu.setText("File");
 			fileMenu.add(getExitMenuItem());
@@ -215,14 +237,15 @@ public class FlickrComposrApp {
 		return fileMenu;
 	}
 
-
 	/**
-	 * This method initializes jMenu	
-	 * 	
-	 * @return javax.swing.JMenu	
+	 * This method initializes jMenu
+	 * 
+	 * @return javax.swing.JMenu
 	 */
-	private JMenu getHelpMenu() {
-		if (helpMenu == null) {
+	private JMenu getHelpMenu()
+	{
+		if (helpMenu == null)
+		{
 			helpMenu = new JMenu();
 			helpMenu.setText("Help");
 			helpMenu.add(getAboutMenuItem());
@@ -231,16 +254,20 @@ public class FlickrComposrApp {
 	}
 
 	/**
-	 * This method initializes jMenuItem	
-	 * 	
-	 * @return javax.swing.JMenuItem	
+	 * This method initializes jMenuItem
+	 * 
+	 * @return javax.swing.JMenuItem
 	 */
-	private JMenuItem getExitMenuItem() {
-		if (exitMenuItem == null) {
+	private JMenuItem getExitMenuItem()
+	{
+		if (exitMenuItem == null)
+		{
 			exitMenuItem = new JMenuItem();
 			exitMenuItem.setText("Exit");
-			exitMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
+			exitMenuItem.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
 					System.exit(0);
 				}
 			});
@@ -249,16 +276,20 @@ public class FlickrComposrApp {
 	}
 
 	/**
-	 * This method initializes jMenuItem	
-	 * 	
-	 * @return javax.swing.JMenuItem	
+	 * This method initializes jMenuItem
+	 * 
+	 * @return javax.swing.JMenuItem
 	 */
-	private JMenuItem getAboutMenuItem() {
-		if (aboutMenuItem == null) {
+	private JMenuItem getAboutMenuItem()
+	{
+		if (aboutMenuItem == null)
+		{
 			aboutMenuItem = new JMenuItem();
 			aboutMenuItem.setText("About");
-			aboutMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
+			aboutMenuItem.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
 					JDialog aboutDialog = getAboutDialog();
 					aboutDialog.pack();
 					Point loc = getJFrame().getLocation();
@@ -272,12 +303,14 @@ public class FlickrComposrApp {
 	}
 
 	/**
-	 * This method initializes aboutDialog	
-	 * 	
+	 * This method initializes aboutDialog
+	 * 
 	 * @return javax.swing.JDialog
 	 */
-	private JDialog getAboutDialog() {
-		if (aboutDialog == null) {
+	private JDialog getAboutDialog()
+	{
+		if (aboutDialog == null)
+		{
 			aboutDialog = new JDialog(getJFrame(), true);
 			aboutDialog.setTitle("About");
 			aboutDialog.setContentPane(getAboutContentPane());
@@ -290,8 +323,10 @@ public class FlickrComposrApp {
 	 * 
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getAboutContentPane() {
-		if (aboutContentPane == null) {
+	private JPanel getAboutContentPane()
+	{
+		if (aboutContentPane == null)
+		{
 			aboutContentPane = new JPanel();
 			aboutContentPane.setLayout(new BorderLayout());
 			aboutContentPane.add(getAboutVersionLabel(), BorderLayout.CENTER);
@@ -300,12 +335,14 @@ public class FlickrComposrApp {
 	}
 
 	/**
-	 * This method initializes aboutVersionLabel	
-	 * 	
-	 * @return javax.swing.JLabel	
+	 * This method initializes aboutVersionLabel
+	 * 
+	 * @return javax.swing.JLabel
 	 */
-	private JLabel getAboutVersionLabel() {
-		if (aboutVersionLabel == null) {
+	private JLabel getAboutVersionLabel()
+	{
+		if (aboutVersionLabel == null)
+		{
 			aboutVersionLabel = new JLabel();
 			aboutVersionLabel.setText("Version 1.0");
 			aboutVersionLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -313,14 +350,15 @@ public class FlickrComposrApp {
 		return aboutVersionLabel;
 	}
 
-
 	/**
-	 * This method initializes insidePanel	
-	 * 	
-	 * @return javax.swing.JPanel	
+	 * This method initializes insidePanel
+	 * 
+	 * @return javax.swing.JPanel
 	 */
-	private JPanel getInsidePanel() {
-		if (insidePanel == null) {
+	private JPanel getInsidePanel()
+	{
+		if (insidePanel == null)
+		{
 
 			GridLayout gridLayout = new GridLayout();
 			gridLayout.setRows(1);
@@ -329,28 +367,33 @@ public class FlickrComposrApp {
 			insidePanel.setLayout(gridLayout);
 			insidePanel.add(getLPanel(), null);
 			insidePanel.add(getRPanel(), null);
-			
+
 		}
 		return insidePanel;
 	}
 
-	private BufferedImage getBlankImage() {
-		return new BufferedImage(375,375,BufferedImage.TYPE_3BYTE_BGR);
+	private BufferedImage getBlankImage()
+	{
+		return new BufferedImage(375, 375, BufferedImage.TYPE_3BYTE_BGR);
 	}
 
-	public void setIm1(BufferedImage im1) {
+	public void setIm1(BufferedImage im1)
+	{
 		this.im1 = im1;
 	}
 
-	public BufferedImage getIm1() {
+	public BufferedImage getIm1()
+	{
 		return im1;
 	}
 
-	public void setIm2(BufferedImage im2) {
+	public void setIm2(BufferedImage im2)
+	{
 		this.im2 = im2;
 	}
 
-	public BufferedImage getIm2() {
+	public BufferedImage getIm2()
+	{
 		return im2;
 	}
 
