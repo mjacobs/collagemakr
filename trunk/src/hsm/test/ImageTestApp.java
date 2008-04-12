@@ -58,7 +58,7 @@ public class ImageTestApp {
 		
 		public ChangeImagePerformer(ImageFrame inFrame)
 		{
-			_ex = new Extraktor();
+			_ex = Extraktor.getExtraktor();
 			_frame = inFrame;
 			try {
 				_src = new FlickrSource();

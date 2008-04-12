@@ -47,7 +47,7 @@ public class Composition {
 		
 		public GenerationContext()
 		{
-			_extract = new Extraktor();
+			_extract = Extraktor.getExtraktor();
 			try {
 				_source = new FlickrSource();
 			} catch (ImageException e) {
