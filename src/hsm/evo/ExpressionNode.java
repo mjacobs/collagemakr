@@ -24,7 +24,7 @@ public abstract class ExpressionNode {
 	
 	protected static HashMap<MutationType, Double> _typeProbs;
 	protected static HashMap<MutationType, Boolean> _typeOnlyOp; 
-	protected static final double _mutationProb = 0.5;
+	protected static final double _mutationProb = 0.2;
 	
 	static
 	{
@@ -34,7 +34,7 @@ public abstract class ExpressionNode {
 		double[] factors = 
 		{
 			1.0, 
-			1.0,
+			50.0,
 			1.0,
 			1.0,
 			1.0,
@@ -66,24 +66,31 @@ public abstract class ExpressionNode {
 	
 	protected static MutationType randomMutationType(boolean isOp)
 	{
-		MutationType type;
-		
-		do
+		if (isOp)
 		{
-			type = randomMutationTypeBlind();
-		} while (_typeOnlyOp.get(type) || isOp);
-		
-		return type;
+			return randomMutationTypeBlind();
+		}
+		else
+		{
+			MutationType type;
+			
+			do
+			{
+				type = randomMutationTypeBlind();
+			} while (_typeOnlyOp.get(type));
+			
+			return type; 
+		}
 	}
 	
 	protected static MutationType randomMutationTypeBlind()
 	{
 		MutationType[] mutations = MutationType.values();
-		MutationType type;
+		MutationType type = MutationType.UNWRAP;
 		
 		do
 		{
-			type = mutations[(int)Math.random()*mutations.length];
+			type = mutations[(int)(Math.random()*mutations.length)];
 		} while (_typeProbs.get(type) < Math.random());
 		
 		return type;
@@ -107,4 +114,27 @@ public abstract class ExpressionNode {
 	public abstract void print(String prefix);
 	public void print() { print(""); }
 	
+	public static void main(String[] argv)
+	{
+		
+		HashMap<MutationType, Integer> freqs = new HashMap<MutationType, Integer>();
+		final int numSamples = 10000;
+		MutationType type;
+		for (int i=0; i<numSamples; i++)
+		{
+			type = ExpressionNode.randomMutationType(true);
+			
+			if (freqs.containsKey(type))
+			{
+				int oldFreq = freqs.get(type);
+				freqs.put(type, oldFreq+1);
+			}
+			else
+			{
+				freqs.put(type, 1);
+			}
+		}
+		
+		System.out.println(freqs);
+	}
 }

@@ -37,10 +37,10 @@ public class ElementNode extends ExpressionNode {
 			switch (mutation)
 			{
 				case REPLACE:
-					return TreeGenerator.randomNode(3);
+					return TreeGenerator.randomNode(0);
 					
 				case OP_WRAP:
-					return TreeGenerator.randomOperationNode(3, this);
+					return TreeGenerator.randomOperationNode(1, this);
 					
 				default:
 					return null;

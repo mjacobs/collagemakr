@@ -119,7 +119,7 @@ public class TreeGenerator {
 		
 		if (includeChild != null)
 		{
-			includeIdx = (int)Math.random()*children.length;
+			includeIdx = (int)(Math.random()*children.length);
 		}
 		
 		for (int i=0; i<children.length; i++)

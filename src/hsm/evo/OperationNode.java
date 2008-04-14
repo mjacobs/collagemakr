@@ -142,9 +142,10 @@ public class OperationNode extends ExpressionNode {
 		return pOut;
 	}
 
-	private static double randomOffset()
+	private static double randomOffset(double min, double max)
 	{
-		return 10.0*(Math.random()*2.0 - 1.0);
+		final double factor = 0.2;
+		return factor*(max-min)*(Math.random()*2.0 - 1.0);
 	}
 	
 	private static HashMap<String, Double> jitteredParameters(HashMap<String, Double> propIn, PropertyData rangeInfo)
@@ -153,7 +154,7 @@ public class OperationNode extends ExpressionNode {
 		
 		for (String prop : rangeInfo.getPropertyNames())
 		{
-			newProp.put(prop, wrapValue(propIn.get(prop) + randomOffset(), 
+			newProp.put(prop, wrapValue(propIn.get(prop) + randomOffset(rangeInfo.getMinimum(prop), rangeInfo.getMaximum(prop)), 
 										rangeInfo.getMinimum(prop), rangeInfo.getMaximum(prop)));
 		}
 		
@@ -191,7 +192,7 @@ public class OperationNode extends ExpressionNode {
 	public ExpressionNode createMutatedInternal(double mutationProb) {
 		if (Math.random() <= mutationProb)
 		{
-			MutationType mutation = ExpressionNode.randomMutationType(false);
+			MutationType mutation = ExpressionNode.randomMutationType(true);
 			
 			switch (mutation)
 			{
@@ -223,7 +224,7 @@ public class OperationNode extends ExpressionNode {
 				}
 				case UNWRAP:
 					// replace self with child
-					return _children[(int)Math.random()*_children.length]
+					return _children[(int)(Math.random()*_children.length)]
 					                 .createMutatedInternal(_mutationProb);
 					
 				case COPY_SIBLING:
