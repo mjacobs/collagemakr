@@ -27,4 +27,9 @@ public abstract class ParametrizedOperation extends ImageOperation {
 	{
 		return _params.get(name);
 	}
+	
+	public HashMap<String, Double> getParameters()
+	{
+		return _params;
+	}
 }

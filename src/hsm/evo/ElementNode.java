@@ -29,9 +29,27 @@ public class ElementNode extends ExpressionNode {
 	}
 
 	@Override
-	public ExpressionNode createMutated() {
-		// TODO Auto-generated method stub
-		return null;
+	public ExpressionNode createMutatedInternal(double mutationProb) {
+		if (Math.random() <= mutationProb)
+		{
+			MutationType mutation = ExpressionNode.randomMutationType(false);
+			
+			switch (mutation)
+			{
+				case REPLACE:
+					return TreeGenerator.randomNode(3);
+					
+				case OP_WRAP:
+					return TreeGenerator.randomOperationNode(3, this);
+					
+				default:
+					return null;
+			}
+		}
+		else
+		{
+			return this;
+		}
 	}
 	
 	public void print(String indent)

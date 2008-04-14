@@ -41,6 +41,11 @@ public class Organism
 
 	public static Organism randomOrganism()
 	{
-		return new Organism(Composition.makeRandomComposition());
+		return new Organism(Composition.randomComposition());
+	}
+	
+	public void printGenome()
+	{
+		_composition.printTree();
 	}
 }
