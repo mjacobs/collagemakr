@@ -51,7 +51,10 @@ public class EvolutionTestApp {
 
 		public void mouseClicked(MouseEvent e) {
 			System.out.println("Mutating organism...");
-			setOrganism(_organism.mutatedCopy());
+			if (_organism != null)
+			{
+				setOrganism(_organism.mutatedCopy());
+			}
 		}
 
 		public void mouseEntered(MouseEvent e) {}
