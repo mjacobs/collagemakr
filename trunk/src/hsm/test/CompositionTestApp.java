@@ -58,7 +58,7 @@ public class CompositionTestApp {
 		System.out.println("initializing...");
 		frame.setVisible(true);
 		
-		compFrame.setComposition(Composition.makeRandomComposition());
+		compFrame.setComposition(Composition.randomComposition());
 		System.out.println("Complete");
 	}
 	
