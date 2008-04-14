@@ -2,8 +2,9 @@ package hsm.evo;
 
 import hsm.evo.OperationMetadata.PropertyData;
 import hsm.image.AnnotatedImage;
-import hsm.image.FlickrSource;
-import hsm.image.ImageException;
+import hsm.image.DirectorySource;
+//import hsm.image.FlickrSource;
+//import hsm.image.ImageException;
 import hsm.image.ImageSource;
 import hsm.tools.Extraktor;
 
@@ -32,13 +33,13 @@ public class TreeGenerator {
 			assert(_ctx == null);
 			
 			_extract = Extraktor.getExtraktor();
-			
-			try {
-				_source = new FlickrSource();
-			} catch (ImageException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			_source = new DirectorySource("data/samples");
+//			try {
+//				//_source = new FlickrSource();
+//				
+//			} catch (ImageException e) {
+//				e.printStackTrace();
+//			}
 		}
 		
 		public Extraktor getExtractor()
@@ -94,10 +95,8 @@ public class TreeGenerator {
 				op = (ParametrizedOperation)opClass.newInstance();
 				
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			

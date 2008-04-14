@@ -1,12 +1,11 @@
 package hsm.evo;
 
 import hsm.evo.OperationMetadata.PropertyData;
+import hsm.image.LayerImage;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.util.HashMap;
+import java.awt.geom.Point2D;
 
-public class TranslateOperation extends ParametrizedBIOpAdaptor {
+public class TranslateOperation extends ParametrizedOperation {
 
 	static
 	{
@@ -16,17 +15,23 @@ public class TranslateOperation extends ParametrizedBIOpAdaptor {
 	}
 	
 	@Override
-	public ParametrizedOperation initWithParameters(HashMap<String, Double> p) {
-		double tx = p.get("x");
-		double ty = p.get("y");
-		AffineTransformOp op = new AffineTransformOp(AffineTransform.getTranslateInstance(tx, ty), AffineTransformOp.TYPE_BILINEAR);
-		
-		return super.initWithOpAndParameters(op, p);
+	public String toString() {
+		return "Translate: " + getParameter("x") + ", " + getParameter("y");
 	}
 
 	@Override
-	public String toString() {
-		return "Translate: " + getParameter("x") + ", " + getParameter("y");
+	public int getNumberOfInputs() {
+		return 1;
+	}
+
+	@Override
+	protected LayerImage performInternal(LayerImage... images) {
+		LayerImage img  = images[0];
+		Point2D loc = img.getLocation();
+		LayerImage result = new LayerImage(img.getImage(), 
+								new Point2D.Double(loc.getX()+getParameter("x"), 
+												   loc.getY()+getParameter("y")));
+		return result;
 	}
 	
 }
