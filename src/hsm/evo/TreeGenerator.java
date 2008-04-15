@@ -6,7 +6,8 @@ import hsm.image.DirectorySource;
 //import hsm.image.FlickrSource;
 //import hsm.image.ImageException;
 import hsm.image.ImageSource;
-import hsm.tools.Extraktor;
+import hsm.tools.IExtractor;
+import hsm.tools.SimpleExtractor;
 
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ public class TreeGenerator {
 	private static class GenerationContext
 	{
 		private static GenerationContext _ctx = null;
-		private Extraktor _extract;
+		private IExtractor _extract;
 		private ImageSource _source;
 		
 		public static GenerationContext getContext()
@@ -32,7 +33,9 @@ public class TreeGenerator {
 		{
 			assert(_ctx == null);
 			
-			_extract = Extraktor.getExtraktor();
+			// TODO: Abstract the creation of the extractor so that we're not hard coding in
+			// a new simpleextractor
+			_extract = new SimpleExtractor();
 			_source = new DirectorySource("data/samples");
 //			try {
 //				//_source = new FlickrSource();
@@ -42,7 +45,7 @@ public class TreeGenerator {
 //			}
 		}
 		
-		public Extraktor getExtractor()
+		public IExtractor getExtractor()
 		{
 			return _extract;
 		}
