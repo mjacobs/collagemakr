@@ -1,5 +1,6 @@
 package hsm.test;
 
+import hsm.evo.RotateOperation;
 import hsm.image.*;
 
 import java.awt.AlphaComposite;
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.AffineTransformOp;
+import java.util.HashMap;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -49,8 +51,8 @@ public class OperationTestApp {
 			if (_image != null)
 			{
 				g2d.drawImage(_image.getImage(), 
-							  (int)Math.round(_image.getLocation().x), 
-							  (int)Math.round(_image.getLocation().y), this);
+							  (int)Math.round(_image.getLocation().getX()), 
+							  (int)Math.round(_image.getLocation().getY()), this);
 				
 				g2d.setColor(Color.GREEN);
 				g2d.draw(_image.getBounds());
@@ -83,11 +85,18 @@ public class OperationTestApp {
 		
 		public void actionPerformed(ActionEvent evt) 
 		{
-			AffineTransform af = AffineTransform.getRotateInstance(_ang, 320, 240);
+//			AffineTransform af = AffineTransform.getRotateInstance(_ang, 320, 240);
+//			
+//			
+//			ImageOperation op1 = new BufferedImageOpAdaptor(
+//											new AffineTransformOp(af, _hints));
 			
+			HashMap<String, Double> props = new HashMap<String, Double>();
+			props.put("angle", (double)_ang);
+			props.put("x", 320.0);
+			props.put("y", 240.0);
 			
-			ImageOperation op1 = new BufferedImageOpAdaptor(
-											new AffineTransformOp(af, _hints));
+			ImageOperation op1 = new RotateOperation().initWithParameters(props);
 			
 			ImageOperation op2 = new CompositeAdaptor(AlphaComposite.Xor);
 			

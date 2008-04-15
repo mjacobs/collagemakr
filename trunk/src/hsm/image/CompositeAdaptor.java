@@ -41,15 +41,15 @@ public class CompositeAdaptor extends ImageOperation {
 		
 		BufferedImage result = new BufferedImage((int)Math.ceil(unionRect.getWidth()),
 												 (int)Math.ceil(unionRect.getHeight()),
-												 src.getImage().getType());
+												 BufferedImage.TYPE_INT_ARGB);
 				 
 		Graphics2D g2d = result.createGraphics();
 		g2d.setComposite(_composite);
 		
-		Point2D.Double srcPos = new Point2D.Double(src.getLocation().x - unionRect.getMinX(),
-										    src.getLocation().y - unionRect.getMinY());
-		Point2D.Double dstPos = new Point2D.Double(dst.getLocation().x - unionRect.getMinX(),
-				   							dst.getLocation().y - unionRect.getMinY());
+		Point2D.Double srcPos = new Point2D.Double(src.getLocation().getX() - unionRect.getMinX(),
+										    src.getLocation().getY() - unionRect.getMinY());
+		Point2D.Double dstPos = new Point2D.Double(dst.getLocation().getX() - unionRect.getMinX(),
+				   							dst.getLocation().getY() - unionRect.getMinY());
 		g2d.drawImage(dst.getImage(), new AffineTransformOp(AffineTransform.getTranslateInstance(dstPos.x, dstPos.y), 
 	            							AffineTransformOp.TYPE_BILINEAR), 0, 0);
 		g2d.drawImage(src.getImage(), new AffineTransformOp(AffineTransform.getTranslateInstance(srcPos.x, srcPos.y), 
