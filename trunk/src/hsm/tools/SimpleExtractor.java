@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
-public class Extraktor
+public class SimpleExtractor implements IExtractor
 {
 
 	private final static double COLOR_SPREAD_THRESHOLD = 3500;
@@ -19,23 +19,11 @@ public class Extraktor
 
 	private final static int NUM_ATTEMPTS = 5;
 
-	private static Extraktor _extraktor;
-
 	private Random _rand;
 
-	private Extraktor()
+	public SimpleExtractor()
 	{
 		_rand = new Random();
-	}
-	
-	public static Extraktor getExtraktor()
-	{
-		if (_extraktor == null)
-		{
-			_extraktor = new Extraktor();
-		}
-		
-		return _extraktor;
 	}
 
 	public BufferedImage getExtract(BufferedImage bImage)
@@ -71,9 +59,9 @@ public class Extraktor
 		{
 			return null;
 		}
-		
+
 		return copyPixelsToNew(bImage, boundaryMap);
-		
+
 	}
 
 	private BufferedImage copyImage(BufferedImage bImage)
