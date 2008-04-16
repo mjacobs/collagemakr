@@ -3,12 +3,16 @@ package hsm.test;
 import hsm.evo.Organism;
 import hsm.image.ImageException;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.TexturePaint;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -23,10 +27,12 @@ public class EvolutionTestApp {
 	{
 		private static final long serialVersionUID = 1L;
 		Organism _organism;
+		Color _gridColor;
 		
-		public OrganismFrame()
+		public OrganismFrame(Color col)
 		{
 			_organism = null;
+			_gridColor = col;
 			
 			addMouseListener(this);
 		}
@@ -44,11 +50,29 @@ public class EvolutionTestApp {
 			repaint();
 		}
 		
+		public BufferedImage getCheckPattern(int size)
+		{
+			BufferedImage bi = new BufferedImage(size*2, size*2, BufferedImage.TYPE_INT_RGB);
+			Graphics2D g2d = bi.createGraphics();
+			
+			g2d.setColor(Color.white);
+			g2d.fillRect(0, 0, size*2, size*2);
+			g2d.setColor(_gridColor);
+			g2d.fillRect(0, 0, size, size);
+			g2d.fillRect(size, size, size, size);
+			
+			return bi;
+		}
+		
 		public void paint(Graphics g)
 		{
 			Graphics2D g2d = (Graphics2D)g;
 			
 			super.paint(g);
+			BufferedImage check = getCheckPattern(10);
+			g2d.setPaint(new TexturePaint(check, new Rectangle(0, 0, check.getWidth(), check.getHeight())));
+			//g2d.setColor(Color.WHITE);
+			g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
 			
 			if (_organism != null)
 			{
@@ -103,20 +127,16 @@ public class EvolutionTestApp {
 					franny.printGenome();
 					
 					_frame1.setOrganism(franny);
+					_frame2.setOrganism(null);
+					
 					_frame2.setOrganism(Organism.randomOrganism());
 				}
 			}
 		}
 
-		public void keyReleased(KeyEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
+		public void keyReleased(KeyEvent arg0) {}
 
-		public void keyTyped(KeyEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
+		public void keyTyped(KeyEvent arg0) {}
 		
 	}
 	
@@ -124,8 +144,8 @@ public class EvolutionTestApp {
 	{
 		JFrame frame = new JFrame();
 		int size = 500;
-		OrganismFrame compFrame = new OrganismFrame();
-		OrganismFrame compFrame2 = new OrganismFrame();
+		OrganismFrame compFrame = new OrganismFrame(new Color(255, 220, 220));
+		OrganismFrame compFrame2 = new OrganismFrame(new Color(220, 220, 255));
 		frame.add(compFrame);
 		frame.add(compFrame2);
 		frame.setLayout(null);

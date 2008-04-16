@@ -2,7 +2,7 @@ package hsm.evo;
 
 import hsm.evo.OperationMetadata.PropertyData;
 import hsm.image.AnnotatedImage;
-import hsm.image.DirectorySource;
+//import hsm.image.DirectorySource;
 import hsm.image.FlickrSource;
 import hsm.image.ImageException;
 //import hsm.image.FlickrSource;
@@ -40,13 +40,13 @@ public class TreeGenerator {
 			// TODO: Abstract the creation of the extractor so that we're not hard coding in
 			// a new simpleextractor
 			_extract = new SimpleExtractor();
-			_source = new DirectorySource("data/samples");
-//			try {
-//				_source = new FlickrSource();
-//				
-//			} catch (ImageException e) {
-//				e.printStackTrace();
-//			}
+			//_source = new DirectorySource("data/samples");
+			try {
+				_source = new FlickrSource();
+				
+			} catch (ImageException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		public IExtractor getExtractor()
