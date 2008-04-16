@@ -3,6 +3,8 @@ package hsm.evo;
 import hsm.evo.OperationMetadata.PropertyData;
 import hsm.image.AnnotatedImage;
 import hsm.image.DirectorySource;
+import hsm.image.FlickrSource;
+import hsm.image.ImageException;
 //import hsm.image.FlickrSource;
 //import hsm.image.ImageException;
 import hsm.image.ImageSource;
@@ -13,7 +15,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class TreeGenerator {
-	public final static int DEFAULT_DEPTH = 3;
+	public final static int DEFAULT_DEPTH = 5;
 	
 	private static class GenerationContext
 	{
@@ -40,7 +42,7 @@ public class TreeGenerator {
 			_extract = new SimpleExtractor();
 			_source = new DirectorySource("data/samples");
 //			try {
-//				//_source = new FlickrSource();
+//				_source = new FlickrSource();
 //				
 //			} catch (ImageException e) {
 //				e.printStackTrace();
@@ -60,9 +62,17 @@ public class TreeGenerator {
 	
 	private static Class<?> randomOperationClass()
 	{
-		Class<?>[] classes = OperationMetadata.getInstance().getOperationClasses();
+		OperationMetadata om = OperationMetadata.getInstance();
+		Class<?>[] classes = om.getOperationClasses();
 		
-		return classes[(int)Math.floor(Math.random()*classes.length)];
+		Class<?> currClass;
+		
+		do
+		{
+			currClass = classes[(int)Math.floor(Math.random()*classes.length)];
+		} while (Math.random() > om.getOperationProbability(currClass));
+		
+		return currClass;
 	}
 	
 	private static HashMap<String, Double> randomParametersForClass(Class<?> c)

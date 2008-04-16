@@ -78,16 +78,20 @@ public final class OperationMetadata {
 	}
 	
 	private HashMap<Class<?>, PropertyData> _propertyData;
+	private HashMap<Class<?>, Double> _selectionProbs;
+	private double _maxProb = 1.0;
 	
 	private OperationMetadata()
 	{
 		_propertyData = new HashMap<Class<?>, PropertyData>();
+		_selectionProbs = new HashMap<Class<?>, Double>();
 	}
 	
 	public PropertyData registerOperation(Class<?> key)
 	{
 		PropertyData pdata = new PropertyData();
 		_propertyData.put(key, pdata);
+		_selectionProbs.put(key, 1.0);
 		
 		return pdata;
 	}
@@ -111,4 +115,21 @@ public final class OperationMetadata {
 		return _propertyData.get(theclass);
 	}
 	
+	public void setOperationProbability(Class<?> opClass, double newProb)
+	{
+		_selectionProbs.remove(opClass);
+		_selectionProbs.put(opClass, newProb);
+		
+		if (newProb > _maxProb)
+		{
+			_maxProb = newProb;
+		}
+	}
+	
+	public double getOperationProbability(Class<?> opClass)
+	{
+		// normalize to between 0 and 1
+		// ACTUALLY a probability density
+		return _selectionProbs.get(opClass)/_maxProb;
+	}
 }
