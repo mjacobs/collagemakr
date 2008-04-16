@@ -109,7 +109,14 @@ public abstract class ExpressionNode {
 	}
 	
 	// mating
-	public abstract ExpressionNode createMated(ExpressionNode friend);
+	public final ExpressionNode createMated(ExpressionNode friend)
+	{
+		return friend.visit(this);
+	}
+	
+	protected abstract ExpressionNode visit(ExpressionNode expr);
+	protected abstract ExpressionNode createMatedWithLeaf(ElementNode op);
+	protected abstract ExpressionNode createMatedWithOperation(OperationNode op);
 	
 	public abstract void print(String prefix);
 	public void print() { print(""); }
