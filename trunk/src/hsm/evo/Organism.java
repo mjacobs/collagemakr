@@ -48,4 +48,9 @@ public class Organism
 	{
 		_composition.printTree();
 	}
+	
+	public Organism unrankedCopy()
+	{
+		return new Organism(_composition);
+	}
 }
