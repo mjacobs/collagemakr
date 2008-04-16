@@ -9,6 +9,8 @@ public class CompositeOverOperation extends ParametrizedOperationAdaptor {
 	static
 	{
 		OperationMetadata.getInstance().registerOperation(CompositeOverOperation.class);
+	
+		OperationMetadata.getInstance().setOperationProbability(CompositeOverOperation.class, 5.0);
 	}
 	
 	public CompositeOverOperation()

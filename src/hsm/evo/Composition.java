@@ -34,7 +34,7 @@ public class Composition {
 	
 	public static Composition randomComposition()
 	{
-		return new Composition(TreeGenerator.randomNode(4));
+		return new Composition(TreeGenerator.randomNode(TreeGenerator.DEFAULT_DEPTH));
 	}
 	
 }
