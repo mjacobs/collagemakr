@@ -32,11 +32,14 @@ public class OperationNode extends ExpressionNode {
 		
 	}
 	
-
-	@Override
-	public ExpressionNode createMated(ExpressionNode friend) {
-		// TODO Auto-generated method stub
-		return null;
+	public ParametrizedOperation getOperation()
+	{
+		return _operation;
+	}
+	
+	public ExpressionNode[] getChildren()
+	{
+		return _children;
 	}
 	
 	private static double wrapValue(double x, double min, double max)
@@ -254,6 +257,88 @@ public class OperationNode extends ExpressionNode {
 		{
 			child.print(indent + "---");
 		}
+	}
+
+	@Override
+	protected ExpressionNode createMatedWithLeaf(ElementNode lf) {
+		// mating operation with leaf: pick one at random
+		if (Math.random() > 0.5)
+		{
+			return this;
+		}
+		else
+		{
+			return lf;
+		}
+	}
+
+	@Override
+	protected ExpressionNode createMatedWithOperation(OperationNode opNode) {
+		// crossing operation with operation: the good stuff!
+		// if same class: cross parameter values
+		if (opNode.getOperation().getClass().equals(this.getOperation().getClass()))
+		{
+			HashMap<String, Double> newParams = crossOperationParams(this.getOperation(), opNode.getOperation());
+			ParametrizedOperation newOp = null ;
+			try {
+				newOp = (ParametrizedOperation)_operation.getClass().newInstance();
+				newOp.initWithParameters(newParams);
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			ExpressionNode[] newChildren = new ExpressionNode[newOp.getNumberOfInputs()];
+			
+			// for each child, mate
+			for (int i=0; i<newOp.getNumberOfInputs(); i++)
+			{
+				newChildren[i] = _children[i].createMated(opNode.getChildren()[i]);
+			}
+			
+			return new OperationNode(newOp, newChildren);
+		}
+		// if diff operation but same number of args, pick random operation from the two
+		else if (opNode.getOperation().getNumberOfInputs() == this.getOperation().getNumberOfInputs())
+		{
+			ParametrizedOperation newOp = Math.random()>0.5 ? opNode.getOperation() : this.getOperation();
+			
+			ExpressionNode[] newChildren = new ExpressionNode[newOp.getNumberOfInputs()];
+			
+			// for each child, mate
+			for (int i=0; i<newOp.getNumberOfInputs(); i++)
+			{
+				newChildren[i] = _children[i].createMated(opNode.getChildren()[i]);
+			}
+			
+			return new OperationNode(newOp, newChildren);
+		}
+		else
+		{
+			return Math.random()>0.5 ? this : opNode;
+		}
+	}
+
+	private static HashMap<String, Double> crossOperationParams(ParametrizedOperation operation, ParametrizedOperation operation2) {
+		// for each parameter, choose randomly between the two
+		PropertyData pData = operation.getPropertyData();
+		HashMap<String, Double> resultProps = new HashMap<String, Double>();
+		
+		for (String param : pData.getPropertyNames())
+		{
+			resultProps.put(param, Math.random()<0.5 ? 
+										operation.getParameter(param) :
+										operation2.getParameter(param));
+		}
+		return resultProps;
+	}
+
+	@Override
+	protected ExpressionNode visit(ExpressionNode expr) {
+		return expr.createMatedWithOperation(this);
 	}
 
 }

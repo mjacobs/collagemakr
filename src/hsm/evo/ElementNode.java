@@ -23,12 +23,6 @@ public class ElementNode extends ExpressionNode {
 	}
 
 	@Override
-	public ExpressionNode createMated(ExpressionNode friend) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public ExpressionNode createMutatedInternal(double mutationProb) {
 		if (Math.random() <= mutationProb)
 		{
@@ -55,6 +49,37 @@ public class ElementNode extends ExpressionNode {
 	public void print(String indent)
 	{
 		System.out.println(indent + "leaf image " + _source.getTitle());
+	}
+
+	@Override
+	protected ExpressionNode createMatedWithLeaf(ElementNode lf) {
+		// mating two leaves: pick one at random
+		if (Math.random() < 0.5)
+		{
+			return this;
+		}
+		else
+		{
+			return lf;
+		}
+	}
+
+	@Override
+	protected ExpressionNode createMatedWithOperation(OperationNode op) {
+		// mating leaf with operation: pick one at random
+		if (Math.random() < 0.5)
+		{
+			return this;
+		}
+		else
+		{
+			return op;
+		}
+	}
+
+	@Override
+	protected ExpressionNode visit(ExpressionNode expr) {
+		return expr.createMatedWithLeaf(this);
 	}
 	
 }
