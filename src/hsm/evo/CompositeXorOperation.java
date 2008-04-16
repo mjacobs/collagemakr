@@ -1,8 +1,10 @@
 package hsm.evo;
 
+import hsm.image.CompositeAdaptor;
+
 import java.awt.AlphaComposite;
 
-public class CompositeXorOperation extends ParametrizedCompositeOperation {
+public class CompositeXorOperation extends ParametrizedOperationAdaptor {
 
 	static
 	{
@@ -11,7 +13,7 @@ public class CompositeXorOperation extends ParametrizedCompositeOperation {
 	
 	public CompositeXorOperation()
 	{
-		super(AlphaComposite.Xor);
+		super(new CompositeAdaptor(AlphaComposite.Xor));
 	}
 	
 	public String toString()

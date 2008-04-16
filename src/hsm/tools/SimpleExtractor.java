@@ -86,7 +86,7 @@ public class SimpleExtractor implements IExtractor
 		int w = bounds[1].x - bounds[0].x + 1;
 		int h = bounds[1].y - bounds[0].y + 1;
 		BufferedImage imNew = new BufferedImage(w, h,
-				BufferedImage.TYPE_4BYTE_ABGR);
+				BufferedImage.TYPE_INT_ARGB);
 
 		Collection<Point> ptsToCopy = bm.getPoints().values();
 

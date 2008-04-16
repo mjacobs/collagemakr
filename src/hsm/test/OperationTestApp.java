@@ -7,12 +7,13 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 import javax.swing.JComponent;
@@ -42,17 +43,34 @@ public class OperationTestApp {
 			repaint();
 		}
 		
+		public BufferedImage getCheckPattern(int size)
+		{
+			BufferedImage bi = new BufferedImage(size*2, size*2, BufferedImage.TYPE_INT_RGB);
+			Graphics2D g2d = bi.createGraphics();
+			
+			g2d.setColor(Color.white);
+			g2d.fillRect(0, 0, size*2, size*2);
+			g2d.setColor(Color.gray);
+			g2d.fillRect(0, 0, size, size);
+			g2d.fillRect(size, size, size, size);
+			
+			return bi;
+		}
+		
 		public void paint(Graphics g)
 		{
 			Graphics2D g2d = (Graphics2D)g;
 			
 			super.paint(g);
+			BufferedImage check = getCheckPattern(10);
+			g2d.setPaint(new TexturePaint(check, new Rectangle(0, 0, check.getWidth(), check.getHeight())));
+			//g2d.setColor(Color.WHITE);
+			g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
 			
 			if (_image != null)
 			{
-				g2d.drawImage(_image.getImage(), 
-							  (int)Math.round(_image.getLocation().getX()), 
-							  (int)Math.round(_image.getLocation().getY()), this);
+				g2d.drawImage(_image.getFlattenedImage(), 
+							  0,0, this);
 				
 				g2d.setColor(Color.GREEN);
 				g2d.draw(_image.getBounds());
@@ -70,15 +88,11 @@ public class OperationTestApp {
 		public AnimationPerformer(LayerFrame inFrame)
 		{
 			_frame = inFrame;
-			try {
-				FlickrSource src = new FlickrSource();
-				_img1 = new LayerImage(src.getRandomImage().getImage(),new Point2D.Double(100, 100));
-				_img2 = new LayerImage(src.getRandomImage().getImage());
-			} catch (ImageException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			
+			DirectorySource src = new DirectorySource("data/samples");
+			_img1 = new LayerImage(src.getRandomImage().getImage(),new Point2D.Double(100, 100));
+			_img2 = new LayerImage(src.getRandomImage().getImage());
+		
 			_hints = new RenderingHints(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 			_hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		}

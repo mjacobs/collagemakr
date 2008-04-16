@@ -1,11 +1,11 @@
 package hsm.evo;
 
-import java.awt.image.BufferedImageOp;
 import java.util.HashMap;
 import com.jhlabs.image.OpacityFilter;
 import hsm.evo.OperationMetadata.PropertyData;
+import hsm.image.BufferedImageOpAdaptor;
 
-public class DissolveOperation extends ParametrizedBIOpAdaptor {
+public class DissolveOperation extends ParametrizedOperationAdaptor {
 
 	static
 	{
@@ -15,9 +15,11 @@ public class DissolveOperation extends ParametrizedBIOpAdaptor {
 	
 	public ParametrizedOperation initWithParameters(HashMap<String, Double> p) {
 		int opacity = (int) Math.round((p.get("opacity")*255));
-		BufferedImageOp op = new OpacityFilter(opacity);
+		BufferedImageOpAdaptor op = new BufferedImageOpAdaptor(new OpacityFilter(opacity));
 		
-		return super.initWithOpAndParameters(op, p);
+		setOperation(op);
+		
+		return super.initWithParameters(p);
 	}
 
 	public String toString()

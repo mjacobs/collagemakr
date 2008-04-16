@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class TreeGenerator {
+	public final static int DEFAULT_DEPTH = 3;
+	
 	private static class GenerationContext
 	{
 		private static GenerationContext _ctx = null;
