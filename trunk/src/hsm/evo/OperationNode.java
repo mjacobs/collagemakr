@@ -80,7 +80,7 @@ public class OperationNode extends ExpressionNode {
 			
 			for (int i=origChildren.length; i<dstOp.getNumberOfInputs(); i++)
 			{
-				result[i] = TreeGenerator.randomNode(3);
+				result[i] = TreeGenerator.randomNode(TreeGenerator.DEFAULT_DEPTH);
 			}
 		}
 		
@@ -232,10 +232,10 @@ public class OperationNode extends ExpressionNode {
 																			  (int)Math.random()*_children.length)));
 					
 				case REPLACE:
-					return TreeGenerator.randomNode(4);
+					return TreeGenerator.randomNode(TreeGenerator.DEFAULT_DEPTH);
 					
 				case OP_WRAP:
-					return TreeGenerator.randomOperationNode(4, this);
+					return TreeGenerator.randomOperationNode(TreeGenerator.DEFAULT_DEPTH, this);
 					
 				default:
 					return null;

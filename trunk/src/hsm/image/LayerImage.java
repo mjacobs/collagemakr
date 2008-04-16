@@ -45,15 +45,25 @@ public class LayerImage {
 	public BufferedImage getFlattenedImage()
 	{
 		Rectangle2D.Double bounds = getBounds();
-		BufferedImage result = new BufferedImage((int)Math.ceil(bounds.getMaxX()), 
-											     (int)Math.ceil(bounds.getMaxY()), BufferedImage.TYPE_INT_ARGB);
+		int xMax = (int)Math.ceil(bounds.getMaxX());
+		int yMax = (int)Math.ceil(bounds.getMaxY());
 		
-		Graphics2D g = result.createGraphics();
+		if (xMax <= 0 || yMax <= 0)
+		{
+			return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		}
+		else
+		{
+			BufferedImage result = new BufferedImage(xMax, yMax, BufferedImage.TYPE_INT_ARGB);
 		
-		g.drawImage(_image, new AffineTransformOp(AffineTransform.getTranslateInstance(_location.getX(), _location.getY()), 
-				            AffineTransformOp.TYPE_BILINEAR), 
-				    0, 0);
+			Graphics2D g = result.createGraphics();
+			
+			g.drawImage(_image, new AffineTransformOp(AffineTransform.getTranslateInstance(_location.getX(), _location.getY()), 
+					            AffineTransformOp.TYPE_BILINEAR), 
+					    0, 0);
+			
+			return result;
+		}
 		
-		return result;
 	}
 }

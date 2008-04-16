@@ -1,12 +1,11 @@
 package hsm.evo;
 
 import hsm.evo.OperationMetadata.PropertyData;
-
+import hsm.image.AffineTransformOperation;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.util.HashMap;
 
-public class ScaleOperation extends ParametrizedBIOpAdaptor {
+public class ScaleOperation extends ParametrizedOperationAdaptor {
 
 	static
 	{
@@ -19,9 +18,11 @@ public class ScaleOperation extends ParametrizedBIOpAdaptor {
 	public ParametrizedOperation initWithParameters(HashMap<String, Double> p) {
 		double sx = p.get("x");
 		double sy = p.get("y");
-		AffineTransformOp op = new AffineTransformOp(AffineTransform.getScaleInstance(sx, sy), AffineTransformOp.TYPE_BILINEAR);
+		AffineTransformOperation op = new AffineTransformOperation(AffineTransform.getScaleInstance(sx, sy));
 		
-		return super.initWithOpAndParameters(op, p);
+		setOperation(op);
+		
+		return super.initWithParameters(p);
 	}
 
 	@Override

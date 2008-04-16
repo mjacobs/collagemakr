@@ -42,8 +42,10 @@ public class CompositeAdaptor extends ImageOperation {
 		BufferedImage result = new BufferedImage((int)Math.ceil(unionRect.getWidth()),
 												 (int)Math.ceil(unionRect.getHeight()),
 												 BufferedImage.TYPE_INT_ARGB);
-				 
+		
 		Graphics2D g2d = result.createGraphics();
+		//g2d.setColor(new Color(0,0,0,0));
+		//g2d.fillRect(0, 0, result.getWidth(), result.getHeight());
 		g2d.setComposite(_composite);
 		
 		Point2D.Double srcPos = new Point2D.Double(src.getLocation().getX() - unionRect.getMinX(),
