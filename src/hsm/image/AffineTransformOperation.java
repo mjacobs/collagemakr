@@ -37,7 +37,7 @@ public class AffineTransformOperation extends ImageOperation {
 	
 	@Override
 	protected LayerImage performInternal(LayerImage... images) {
-		assert(_baseTrans == null);
+		assert(_baseTrans != null);
 		
 		LayerImage img = images[0];
 		BufferedImage imgData = img.getImage();
