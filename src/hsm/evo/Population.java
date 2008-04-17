@@ -89,4 +89,10 @@ public class Population
 		
 		return new Population(newOrgs, _generation+1);
 	}
+	
+	public static void main(String[] vargs)
+	{
+		randomPopulation(9);
+		System.out.println("Test done.");
+	}
 }
