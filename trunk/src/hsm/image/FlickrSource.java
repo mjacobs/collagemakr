@@ -163,7 +163,7 @@ public class FlickrSource implements ImageSource {
 
 	private static BufferedImage loadImage(Photo photo, PhotosInterface pinterface) throws ImageException {
 		try {
-			return pinterface.getImage(photo, Size.MEDIUM);
+			return pinterface.getImage(photo, Size.SMALL);
 		} catch (IOException e) {
 			throw new ImageException();
 		} catch (FlickrException e) {

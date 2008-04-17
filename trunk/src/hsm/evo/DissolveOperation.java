@@ -10,7 +10,7 @@ public class DissolveOperation extends ParametrizedOperationAdaptor {
 	static
 	{
 		PropertyData d = OperationMetadata.getInstance().registerOperation(DissolveOperation.class);
-		d.putProperty("opacity", 0.0, 1.0);
+		d.putProperty("opacity", 0.0, 2.0);
 	}
 	
 	public ParametrizedOperation initWithParameters(HashMap<String, Double> p) {

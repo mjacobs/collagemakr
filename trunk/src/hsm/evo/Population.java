@@ -32,6 +32,7 @@ public class Population
 
 		for (int i = 0; i < popSize; i++)
 		{
+			System.out.println("Creating organism " + i);
 			arrayList.add(Organism.randomOrganism());
 		}
 
@@ -84,6 +85,7 @@ public class Population
 		
 		for (int i=startIdx; i<newOrgs.length; i++)
 		{
+			
 			newOrgs[i] = randomFitOrganism(maxFit).matedCopy(randomFitOrganism(maxFit));
 		}
 		
@@ -92,7 +94,7 @@ public class Population
 	
 	public static void main(String[] vargs)
 	{
-		randomPopulation(9);
+		randomPopulation(16);
 		System.out.println("Test done.");
 	}
 }
