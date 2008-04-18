@@ -39,7 +39,13 @@ public class LayerImage {
 	
 	public Rectangle2D.Double getBounds()
 	{
-		return new Rectangle2D.Double(_location.getX(), _location.getY(), _image.getWidth(), _image.getHeight());
+		return new Rectangle2D.Double(_location.getX(),  _location.getY(),
+									  _image.getWidth(), _image.getHeight());
+	}
+	
+	public AffineTransform imageToCanvasTransform()
+	{
+		return AffineTransform.getTranslateInstance(_location.getX(), _location.getY());
 	}
 	
 	public BufferedImage getFlattenedImage()
@@ -58,8 +64,7 @@ public class LayerImage {
 		
 			Graphics2D g = result.createGraphics();
 			
-			g.drawImage(_image, new AffineTransformOp(AffineTransform.getTranslateInstance(_location.getX(), _location.getY()), 
-					            AffineTransformOp.TYPE_BILINEAR), 
+			g.drawImage(_image, new AffineTransformOp(imageToCanvasTransform(), AffineTransformOp.TYPE_BILINEAR), 
 					    0, 0);
 			
 			return result;

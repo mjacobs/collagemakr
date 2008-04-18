@@ -11,6 +11,7 @@ import hsm.image.ImageSource;
 import hsm.tools.IExtractor;
 import hsm.tools.SimpleExtractor;
 
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
@@ -166,7 +167,8 @@ public class TreeGenerator {
 		
 		System.out.println("done.");
 		
-		return new ElementNode(extractedImage, randImage);
+		return new ElementNode(new Point2D.Double(Math.random()*250.0,Math.random()*250.0),
+							   extractedImage, randImage);
 	}
 	
 	

@@ -81,10 +81,17 @@ public class EvolutionTestApp {
 		}
 
 		public void mouseClicked(MouseEvent e) {
-			System.out.println("Mutating organism...");
 			if (_organism != null)
 			{
-				setOrganism(_organism.mutatedCopy());
+				if (e.getButton() == MouseEvent.BUTTON1)
+				{
+					System.out.println("Mutating organism...");
+					setOrganism(_organism.mutatedCopy());
+				}
+				else if (e.getButton() == MouseEvent.BUTTON3)
+				{
+					_organism.printGenome();
+				}
 			}
 		}
 
@@ -143,7 +150,7 @@ public class EvolutionTestApp {
 	public EvolutionTestApp() throws ImageException
 	{
 		JFrame frame = new JFrame();
-		int size = 500;
+		int size = 250;
 		OrganismFrame compFrame = new OrganismFrame(new Color(255, 220, 220));
 		OrganismFrame compFrame2 = new OrganismFrame(new Color(220, 220, 255));
 		frame.add(compFrame);

@@ -10,8 +10,8 @@ public class TranslateOperation extends ParametrizedOperation {
 	static
 	{
 		PropertyData d = OperationMetadata.getInstance().registerOperation(TranslateOperation.class);
-		d.putProperty("x", 0.0, 100.0);
-		d.putProperty("y", 0.0, 100.0);
+		d.putProperty("x", -100.0, 100.0);
+		d.putProperty("y", -100.0, 100.0);
 	}
 	
 	@Override

@@ -9,7 +9,7 @@ public class CompositeXorOperation extends ParametrizedOperationAdaptor {
 	static
 	{
 		OperationMetadata.getInstance().registerOperation(CompositeXorOperation.class);
-		OperationMetadata.getInstance().setOperationProbability(CompositeXorOperation.class, 1.0);
+		OperationMetadata.getInstance().setOperationProbability(CompositeXorOperation.class, 0.5);
 	}
 	
 	public CompositeXorOperation()

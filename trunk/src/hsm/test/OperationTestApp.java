@@ -83,6 +83,7 @@ public class OperationTestApp {
 		LayerFrame _frame;
 		LayerImage _img1, _img2;
 		float _ang = 0.0f;
+		int _step = 0;
 		RenderingHints _hints;
 		
 		public AnimationPerformer(LayerFrame inFrame)
@@ -114,9 +115,17 @@ public class OperationTestApp {
 			
 			ImageOperation op2 = new CompositeAdaptor(AlphaComposite.Xor);
 			
-			_frame.setImage(op2.perform(op1.perform(_img1), _img2));
+			if ((_step % 2) == 0)
+			{
+				_frame.setImage(op2.perform(op1.perform(_img1), _img2));
+			}
+			else
+			{
+				_frame.setImage(op2.perform(_img1, _img2));
+			}
 			
-			_ang += 0.01f;
+			//_ang += 0.01f;
+			_step++;
 		}
 		
 	}

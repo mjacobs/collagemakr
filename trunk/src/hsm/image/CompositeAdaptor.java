@@ -37,27 +37,30 @@ public class CompositeAdaptor extends ImageOperation {
 		LayerImage src = images[0];
 		LayerImage dst = images[1];
 		
-		Rectangle2D unionRect = src.getBounds().createUnion(dst.getBounds());
+		Rectangle2D srcBounds = src.getBounds();
+		Rectangle2D dstBounds = dst.getBounds();
+		Rectangle2D unionRect = srcBounds.createUnion(dstBounds);
 		
 		BufferedImage result = new BufferedImage((int)Math.ceil(unionRect.getWidth()),
 												 (int)Math.ceil(unionRect.getHeight()),
 												 BufferedImage.TYPE_INT_ARGB);
 		
+		Rectangle2D resultRect = new Rectangle2D.Double(unionRect.getMinX(), unionRect.getMinY(),
+													    result.getWidth(), result.getHeight());
+		
 		Graphics2D g2d = result.createGraphics();
-		//g2d.setColor(new Color(0,0,0,0));
-		//g2d.fillRect(0, 0, result.getWidth(), result.getHeight());
 		g2d.setComposite(_composite);
 		
-		Point2D.Double srcPos = new Point2D.Double(src.getLocation().getX() - unionRect.getMinX(),
-										    src.getLocation().getY() - unionRect.getMinY());
-		Point2D.Double dstPos = new Point2D.Double(dst.getLocation().getX() - unionRect.getMinX(),
-				   							dst.getLocation().getY() - unionRect.getMinY());
+		Point2D.Double srcPos = new Point2D.Double(srcBounds.getMinX() - unionRect.getMinX(),
+										    srcBounds.getMinY() - unionRect.getMinY());
+		Point2D.Double dstPos = new Point2D.Double(dstBounds.getMinX() - unionRect.getMinX(),
+				   							dstBounds.getMinY() - unionRect.getMinY());
 		g2d.drawImage(dst.getImage(), new AffineTransformOp(AffineTransform.getTranslateInstance(dstPos.x, dstPos.y), 
 	            							AffineTransformOp.TYPE_BILINEAR), 0, 0);
 		g2d.drawImage(src.getImage(), new AffineTransformOp(AffineTransform.getTranslateInstance(srcPos.x, srcPos.y), 
 												AffineTransformOp.TYPE_BILINEAR), 0, 0);
 		
-		return new LayerImage(result, new Point2D.Double(unionRect.getMinX(), unionRect.getMinY()));
+		return new LayerImage(result, new Point2D.Double(resultRect.getMinX(), resultRect.getMinY()));
 	}
 
 }

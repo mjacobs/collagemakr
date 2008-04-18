@@ -60,7 +60,7 @@ public class AffineTransformOperation extends ImageOperation {
 		trans.concatenate(_baseTrans);
 		
 		// first translate source image to its layer position
-		trans.translate(img.getLocation().getX(), img.getLocation().getY());
+		trans.concatenate(img.imageToCanvasTransform());
 		
 		// apply the transformation to the input image into a destination image
 		AffineTransformOp op = new AffineTransformOp(trans, AffineTransformOp.TYPE_BILINEAR);
@@ -69,7 +69,7 @@ public class AffineTransformOperation extends ImageOperation {
 		g2d.drawImage(img.getImage(), op, 0, 0);
 		
 		// and return a layer image starting at the proper origin
-		return new LayerImage(dstImg, transOrigin);
+		return new LayerImage(dstImg, new Point2D.Double(transBounds.getMinX(), transBounds.getMinY()));
 	}
 	
 }

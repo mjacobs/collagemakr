@@ -9,7 +9,9 @@ public class DissolveOperation extends ParametrizedOperationAdaptor {
 
 	static
 	{
-		PropertyData d = OperationMetadata.getInstance().registerOperation(DissolveOperation.class);
+		OperationMetadata om = OperationMetadata.getInstance();
+		PropertyData d = om.registerOperation(DissolveOperation.class);
+		om.setOperationProbability(DissolveOperation.class, 0.5);
 		d.putProperty("opacity", 0.0, 2.0);
 	}
 	
