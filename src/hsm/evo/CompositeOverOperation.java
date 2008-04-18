@@ -10,7 +10,7 @@ public class CompositeOverOperation extends ParametrizedOperationAdaptor {
 	{
 		OperationMetadata.getInstance().registerOperation(CompositeOverOperation.class);
 	
-		OperationMetadata.getInstance().setOperationProbability(CompositeOverOperation.class, 2.0);
+		OperationMetadata.getInstance().setOperationProbability(CompositeOverOperation.class, 5.0);
 	}
 	
 	public CompositeOverOperation()

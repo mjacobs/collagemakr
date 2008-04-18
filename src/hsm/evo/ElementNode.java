@@ -3,23 +3,27 @@ package hsm.evo;
 import hsm.image.AnnotatedImage;
 import hsm.image.LayerImage;
 
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 public class ElementNode extends ExpressionNode {
 
 	private BufferedImage _image;
 	private AnnotatedImage _source;
+	private Point2D _center;
 	
-	public ElementNode(BufferedImage img, AnnotatedImage src)
+	public ElementNode(Point2D center, BufferedImage img, AnnotatedImage src)
 	{
 		_image = img;
 		_source = src;
+		_center = center;
 	}
 	
 	@Override
 	public LayerImage evaluate() 
 	{
-		return new LayerImage(_image);
+		return new LayerImage(_image, new Point2D.Double(_center.getX()-_image.getWidth()/2.0, 
+												  		 _center.getY()-_image.getHeight()/2.0));
 	}
 
 	@Override
