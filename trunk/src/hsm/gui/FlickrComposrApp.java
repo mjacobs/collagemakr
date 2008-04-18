@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -28,8 +30,8 @@ import java.awt.Point;
 
 public class FlickrComposrApp
 {
-	protected static final int NUM_IMS_W = 0;
-	protected static final int NUM_IMS_H = 0;
+	protected static final int NUM_IMS_W = 3;
+	protected static final int NUM_IMS_H = 3;
 	
 	protected Population _currentPopulation;
 	
@@ -44,15 +46,10 @@ public class FlickrComposrApp
 	private JPanel aboutContentPane = null;
 	private JLabel aboutVersionLabel = null;
 	private JLabel makrTitle = null;
-	private JPanel insidePanel = null;
-	private JLabel im1label = null;
-	private JLabel im2label = null;
-	private JPanel lPanel = null;
-	private JPanel rPanel = null;
 	
 	public FlickrComposrApp()
 	{
-		
+		_currentPopulation = Population.randomPopulation(NUM_IMS_W * NUM_IMS_H);
 	}
 	
 	private JFrame getJFrame()
@@ -88,10 +85,11 @@ public class FlickrComposrApp
 			jContentPane.setLayout(new BorderLayout());
 			jContentPane.add(makrTitle, BorderLayout.NORTH);
 			
-		    TableModel dataModel = null;
+			ComposrTableModel dataModel = new ComposrTableModel(_currentPopulation.getOrganisms());
 		    
 		    JTable table = new JTable(dataModel);
-		    jContentPane.add(table);
+		    
+		    jContentPane.add(table, BorderLayout.CENTER);
 		    
 			
 		}
@@ -259,6 +257,19 @@ public class FlickrComposrApp
 	
 	private class ComposrTableModel extends AbstractTableModel
 	{
+		JLabel[][] model;
+		public ComposrTableModel(Organism[] orgs)
+		{
+			model = new JLabel[NUM_IMS_H][NUM_IMS_W];
+			for (int i = 0; i < NUM_IMS_H; i++)
+			{
+				for (int j = 0; j < NUM_IMS_W; j++)
+				{
+					BufferedImage im = orgs[i * NUM_IMS_W + j].getComposition().getImage();
+					model[i][j] = new JLabel(new ImageIcon(im));
+				}
+			}
+		}
 		public int getColumnCount()
 		{
 			return NUM_IMS_W;
@@ -271,10 +282,12 @@ public class FlickrComposrApp
 		
 		public Object getValueAt(int row, int col)
 		{
-			if (row * NUM_IMS_W + col < _currentPopulation.getOrganisms().length)
-				return _currentPopulation.getOrganisms()[row * NUM_IMS_W + col].getComposition().getImage();
-			else
-				return null;
+			return (row > NUM_IMS_H) || (col > NUM_IMS_W) ? null : model[row][col];
+		}
+		
+		public Class getColumnClass(int column)
+		{
+			return getValueAt(0, column).getClass();
 		}
 	};
 	
