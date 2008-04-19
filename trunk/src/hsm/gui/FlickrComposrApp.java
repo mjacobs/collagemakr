@@ -5,13 +5,17 @@ import hsm.evo.Organism;
 import hsm.evo.Population;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
-import javax.swing.Icon;
+import javax.imageio.ImageIO;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -20,18 +24,30 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.basic.BasicTreeUI.SelectionModelPropertyChangeHandler;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
+import javax.swing.text.TableView.TableCell;
 
 import java.awt.Point;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class FlickrComposrApp
 {
 	protected static final int NUM_IMS_W = 3;
 	protected static final int NUM_IMS_H = 3;
+	protected static final int NUM_CHOICES = 3;
 	
 	protected Population _currentPopulation;
 	
@@ -46,10 +62,15 @@ public class FlickrComposrApp
 	private JPanel aboutContentPane = null;
 	private JLabel aboutVersionLabel = null;
 	private JLabel makrTitle = null;
+	private ButtonGroup[] choice;
 	
 	public FlickrComposrApp()
 	{
 		_currentPopulation = Population.randomPopulation(NUM_IMS_W * NUM_IMS_H);
+		choice = new ButtonGroup[NUM_CHOICES];
+		for (int i = 0; i < NUM_CHOICES; i++)
+			choice[i] = new ButtonGroup();
+		
 	}
 	
 	private JFrame getJFrame()
@@ -85,11 +106,17 @@ public class FlickrComposrApp
 			jContentPane.setLayout(new BorderLayout());
 			jContentPane.add(makrTitle, BorderLayout.NORTH);
 			
-			ComposrTableModel dataModel = new ComposrTableModel(_currentPopulation.getOrganisms());
-		    
+		    TableModel dataModel = new ComposrTableModel(_currentPopulation);		    
 		    JTable table = new JTable(dataModel);
+		    table.setRowHeight(255);
+		    table.setColumnSelectionAllowed(false);
+		    table.setRowSelectionAllowed(false);
 		    
-		    jContentPane.add(table, BorderLayout.CENTER);
+		    table.setDefaultRenderer(Organism.class, new RankCellRenderer());
+		    
+		    JScrollPane jscrPane = new JScrollPane(table);
+		    
+		    jContentPane.add(jscrPane, BorderLayout.CENTER);
 		    
 			
 		}
@@ -255,18 +282,52 @@ public class FlickrComposrApp
 		});
 	}
 	
+	private class RankPanel extends JPanel
+	{
+		private JRadioButton[] buttons;
+		public RankPanel(Organism org)
+		{
+			super(new GridLayout(2,1));
+			this.add(new JLabel(new ImageIcon(org.getComposition().getImage())));
+			JPanel p = new JPanel(new GridLayout(1, 3));
+			buttons = new JRadioButton[NUM_CHOICES];
+			for (int i = 0; i < NUM_CHOICES; i++)
+			{
+				buttons[i] = new JRadioButton(String.valueOf(i));
+				choice[i].add(buttons[i]);
+				p.add(buttons[i]);
+			}
+			this.add(p);
+		}
+	}
+	
+	private class RankCellRenderer extends JPanel implements TableCellRenderer
+	{
+
+		public Component getTableCellRendererComponent(JTable table,
+				Object value, boolean isSelected, boolean hasFocus, int row,
+				int column)
+		{
+			return new RankPanel((Organism) value);
+		}
+		
+	}
+	
 	private class ComposrTableModel extends AbstractTableModel
 	{
-		JLabel[][] model;
-		public ComposrTableModel(Organism[] orgs)
+		Organism[][] pModel;
+		
+		public ComposrTableModel(Population population)
 		{
-			model = new JLabel[NUM_IMS_H][NUM_IMS_W];
+			Organism[] orgs = population.getOrganisms();
+
+			pModel = new Organism[NUM_IMS_H][NUM_IMS_W];
+
 			for (int i = 0; i < NUM_IMS_H; i++)
 			{
 				for (int j = 0; j < NUM_IMS_W; j++)
 				{
-					BufferedImage im = orgs[i * NUM_IMS_W + j].getComposition().getImage();
-					model[i][j] = new JLabel(new ImageIcon(im));
+					pModel[i][j] = orgs[i * NUM_IMS_W + j];
 				}
 			}
 		}
@@ -282,7 +343,7 @@ public class FlickrComposrApp
 		
 		public Object getValueAt(int row, int col)
 		{
-			return (row > NUM_IMS_H) || (col > NUM_IMS_W) ? null : model[row][col];
+			return (row > NUM_IMS_H) || (col > NUM_IMS_W) ? null : pModel[row][col];
 		}
 		
 		public Class getColumnClass(int column)
