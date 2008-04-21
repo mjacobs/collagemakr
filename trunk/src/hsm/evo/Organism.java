@@ -9,7 +9,7 @@ public class Organism
 	public Organism(Composition comp)
 	{
 		_composition = comp;
-		_fitness = 0.0;
+		_fitness = 1.0;
 	}
 
 	public Composition getComposition()

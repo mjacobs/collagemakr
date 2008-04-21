@@ -92,7 +92,6 @@ public abstract class ExpressionNode {
 		{
 			type = mutations[(int)(Math.random()*mutations.length)];
 		} while (_typeProbs.get(type) < Math.random());
-		System.out.println(type.toString());
 		
 		return type;
 	}

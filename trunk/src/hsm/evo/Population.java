@@ -86,7 +86,7 @@ public class Population
 		for (int i=startIdx; i<newOrgs.length; i++)
 		{
 			
-			newOrgs[i] = randomFitOrganism(maxFit).matedCopy(randomFitOrganism(maxFit));
+			newOrgs[i] = randomFitOrganism(maxFit).mutatedCopy().matedCopy(randomFitOrganism(maxFit).mutatedCopy());
 		}
 		
 		return new Population(newOrgs, _generation+1);
@@ -94,7 +94,13 @@ public class Population
 	
 	public static void main(String[] vargs)
 	{
-		randomPopulation(16);
-		System.out.println("Test done.");
+		Population p = randomPopulation(16);
+		System.out.println("Creation done, trying to advance generation...");
+		for (Organism o : p.getOrganisms())
+			o.setFitness(1.0);
+		
+		p.nextGeneration();
+		System.out.println("Done.");
+		
 	}
 }

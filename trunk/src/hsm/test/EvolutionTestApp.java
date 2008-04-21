@@ -1,6 +1,7 @@
 package hsm.test;
 
 import hsm.evo.Organism;
+import hsm.global.Config;
 import hsm.image.ImageException;
 
 import java.awt.Color;
@@ -150,7 +151,9 @@ public class EvolutionTestApp {
 	public EvolutionTestApp() throws ImageException
 	{
 		JFrame frame = new JFrame();
-		int size = 250;
+		int sizeW, sizeH;
+		sizeW = Config.getConfig().getInt("canvas_width");
+		sizeH = Config.getConfig().getInt("canvas_height");
 		OrganismFrame compFrame = new OrganismFrame(new Color(255, 220, 220));
 		OrganismFrame compFrame2 = new OrganismFrame(new Color(220, 220, 255));
 		frame.add(compFrame);
@@ -158,10 +161,10 @@ public class EvolutionTestApp {
 		frame.setLayout(null);
 		frame.addKeyListener(new MatingListener(compFrame, compFrame2));
 		
-		compFrame.setBounds(0, 0, size, size);
-		compFrame2.setBounds(size, 0, size, size);
+		compFrame.setBounds(0, 0, sizeW, sizeH);
+		compFrame2.setBounds(sizeW, 0, sizeW, sizeH);
 		
-		frame.setSize(size*2, size);
+		frame.setSize(sizeW*2, sizeH);
 		frame.setVisible(true);
 
 		System.out.println("initializing...");
@@ -171,8 +174,6 @@ public class EvolutionTestApp {
 		compFrame2.setOrganism(Organism.randomOrganism());
 		System.out.println("Complete");
 	}
-	
-	
 	
 	public static void main(String[] argv) throws ImageException
 	{

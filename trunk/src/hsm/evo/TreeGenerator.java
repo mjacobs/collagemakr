@@ -1,12 +1,11 @@
 package hsm.evo;
 
 import hsm.evo.OperationMetadata.PropertyData;
+import hsm.global.Config;
 import hsm.image.AnnotatedImage;
-//import hsm.image.DirectorySource;
-import hsm.image.FlickrSource;
+import hsm.image.DirectorySource;
 import hsm.image.ImageException;
-//import hsm.image.FlickrSource;
-//import hsm.image.ImageException;
+import hsm.image.FlickrSource;
 import hsm.image.ImageSource;
 import hsm.tools.IExtractor;
 import hsm.tools.SimpleExtractor;
@@ -17,6 +16,19 @@ import java.util.HashMap;
 
 public class TreeGenerator {
 	public final static int DEFAULT_DEPTH = 5;
+	public final static String OFFLINE = "offline";
+	public final static String OFFLINE_DIR = "offline_dir";
+	public final static String CANVAS_WIDTH = "canvas_width";
+	public final static String CANVAS_HEIGHT = "canvas_height";
+	
+	static
+	{
+		Config.getConfig().registerBoolean(OFFLINE, false);
+		Config.getConfig().registerString(OFFLINE_DIR, ".");
+		Config.getConfig().registerInt(CANVAS_WIDTH, 250);
+		Config.getConfig().registerInt(CANVAS_HEIGHT, 250);
+		
+	}
 	
 	private static class GenerationContext
 	{
@@ -41,13 +53,20 @@ public class TreeGenerator {
 			// TODO: Abstract the creation of the extractor so that we're not hard coding in
 			// a new simpleextractor
 			_extract = new SimpleExtractor();
-			//_source = new DirectorySource("data/samples");
-			try {
-				_source = new FlickrSource();
-				
-			} catch (ImageException e) {
-				e.printStackTrace();
+			
+			if (Config.getConfig().getBoolean(OFFLINE))
+			{
+				_source = new DirectorySource(Config.getConfig().getString(OFFLINE_DIR));
 			}
+			else
+			{
+				try {
+					_source = new FlickrSource();
+					
+				} catch (ImageException e) {
+					e.printStackTrace();
+				}
+			}		
 		}
 		
 		public IExtractor getExtractor()
@@ -167,7 +186,11 @@ public class TreeGenerator {
 		
 		System.out.println("done.");
 		
-		return new ElementNode(new Point2D.Double(Math.random()*250.0,Math.random()*250.0),
+		double width, height;
+		width = Config.getConfig().getInt(CANVAS_WIDTH);
+		height = Config.getConfig().getInt(CANVAS_HEIGHT);
+		
+		return new ElementNode(new Point2D.Double(Math.random()*width,Math.random()*height),
 							   extractedImage, randImage);
 	}
 	
