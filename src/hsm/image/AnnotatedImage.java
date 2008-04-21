@@ -9,12 +9,12 @@ public class AnnotatedImage {
 	
 	protected Set<String> _tags;
 	protected String _owner;
-	protected BufferedImage _image;
+	protected DeferredImage _image;
 	protected String _title;
 	
 	public AnnotatedImage(BufferedImage img, String title, String owner, Collection<String> tags)
 	{
-		_image = img;
+		_image = new DeferredImage(img);
 		_tags = new HashSet<String>(tags);
 		_owner = owner;
 		_title = title;
@@ -30,7 +30,7 @@ public class AnnotatedImage {
 	}
 
 	public BufferedImage getImage() {
-		return _image;
+		return _image.getImage();
 	}
 
 	@SuppressWarnings("unchecked")

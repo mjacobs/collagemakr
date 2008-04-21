@@ -67,8 +67,8 @@ public class SimpleExtractor implements IExtractor
 	private BufferedImage copyImage(BufferedImage bImage)
 	{
 		BufferedImage newImage = new BufferedImage(bImage.getWidth(), bImage
-				.getHeight(), bImage.getType());
-		newImage.setData(bImage.getData());
+				.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		newImage.createGraphics().drawImage(bImage, 0, 0, null);
 		return newImage;
 	}
 

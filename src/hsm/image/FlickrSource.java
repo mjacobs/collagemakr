@@ -1,5 +1,7 @@
 package hsm.image;
 
+import hsm.global.Config;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Collection;
@@ -35,6 +37,13 @@ public class FlickrSource implements ImageSource {
 	private Vector<Photo> _photoPool;
 	
 	private final boolean recent = true;
+	
+	public static final String FLICKR_SIZE = "flickr_size";
+	
+	static
+	{
+		Config.getConfig().registerString(FLICKR_SIZE, "medium");
+	}
 	
 	@SuppressWarnings("unchecked")
 	public FlickrSource() throws ImageException
@@ -160,10 +169,40 @@ public class FlickrSource implements ImageSource {
 		else 
 			return "Unknown";
 	}
+	
+	private static int parseSize(String size)
+	{
+		size = size.toLowerCase();
+		
+		if (size.startsWith("s"))
+		{
+			return Size.SMALL;
+		}
+		else if (size.startsWith("m"))
+		{
+			return Size.MEDIUM;
+		}
+		else if (size.startsWith("l"))
+		{
+			return Size.LARGE;
+		}
+		else if (size.startsWith("o"))
+		{
+			return Size.ORIGINAL;
+		}
+		else if (size.startsWith("t"))
+		{
+			return Size.THUMB;
+		}
+		else
+		{
+			throw new IllegalArgumentException(size + " is not a valid size");
+		}
+	}
 
 	private static BufferedImage loadImage(Photo photo, PhotosInterface pinterface) throws ImageException {
 		try {
-			return pinterface.getImage(photo, Size.SMALL);
+			return pinterface.getImage(photo, parseSize(Config.getConfig().getString(FLICKR_SIZE)));
 		} catch (IOException e) {
 			throw new ImageException();
 		} catch (FlickrException e) {
