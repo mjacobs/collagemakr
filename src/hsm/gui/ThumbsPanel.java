@@ -47,7 +47,6 @@ public class ThumbsPanel extends JPanel
 		{
 			Component tl = new ThumbLabel(orgs.get(i));
 			tl.addMouseListener(tdl);
-			tl.addMouseMotionListener(tdl);
 			this.add(tl);
 		}
 	}
@@ -111,44 +110,24 @@ public class ThumbsPanel extends JPanel
 		
 	}
 	
-	private class ThumbDragListener implements MouseListener, MouseMotionListener
+	private class ThumbDragListener implements MouseListener
 	{
 		public void mouseClicked(MouseEvent e) {
 			Organism o = ((ThumbLabel) e.getSource()).getOrganism();
-			largeDisplay.removeAll();
-			largeDisplay.add(new JLabel(new ImageIcon(o.getComposition().getImage())));
-			largeDisplay.repaint();
-			largeDisplay.revalidate();
-		}
-		public void mouseEntered(MouseEvent e) {
-			//System.out.println("ENTER " + ((ThumbLabel)e.getComponent()).getID() + " at " + e.getX() + ", " + e.getY());
-			in = (ThumbLabel) e.getSource();
-		}
-		public void mouseExited(MouseEvent e) {
-			//System.out.println("EXIT " + ((ThumbLabel)e.getComponent()).getID() + " at " + e.getX() + ", " + e.getY());
-			in = null;
-		}
-		public void mousePressed(MouseEvent e) { }
-		public void mouseMoved(MouseEvent e) { }
-		
-		public void mouseDragged(MouseEvent e)
-		{
-			//System.out.println("DRAG " + ((ThumbLabel)e.getComponent()).getID() + " at " + e.getX() + ", " + e.getY());
-			if (in == null)
-				in = (ThumbLabel) e.getSource();
-		}
-		
-		public void mouseReleased(MouseEvent e) 
-		{ 
-			//System.out.println("REL " + ((ThumbLabel)e.getComponent()).getID() + " at " + e.getX() + ", " + e.getY());
-			if (in != null)
+			if (o.getFitness() == 1.0)
 			{
-				if (in != (ThumbLabel) e.getSource())
-					reorder(in, (ThumbLabel) e.getSource());
-				
-				in = null;
+				((ThumbLabel) e.getSource()).setBorder(null);
+				o.setFitness(0);
+			}
+			else
+			{
+				o.setFitness(1.0);
 			}
 		}
+		public void mouseEntered(MouseEvent e) { }
+		public void mouseExited(MouseEvent e) {	}
+		public void mousePressed(MouseEvent e) { }		
+		public void mouseReleased(MouseEvent e) { }
 	}
 
 }
