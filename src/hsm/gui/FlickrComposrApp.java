@@ -4,16 +4,11 @@ import hsm.evo.Organism;
 import hsm.evo.Population;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.JDialog;
@@ -72,6 +67,8 @@ public class FlickrComposrApp
 			
 			jContentPane = null;
 			jFrame.setContentPane(getJContentPane());
+			jFrame.repaint();
+			jContentPane.revalidate();
 		}
 	}
 
