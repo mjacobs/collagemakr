@@ -34,6 +34,11 @@ public class ThumbsPanel extends JPanel
 		this.largeDisplay = largeDisplay;
 		addOrganisms();
 	}
+	
+	public LinkedList<Organism> getOrganismsList()
+	{
+		return orgs;
+	}
 
 	private void addOrganisms()
 	{
