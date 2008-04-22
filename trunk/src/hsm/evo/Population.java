@@ -14,6 +14,11 @@ public class Population
 		_orgs = orgs;
 		_generation = generation;
 	}
+	
+	public int getSize()
+	{
+		return _orgs.length;
+	}
 
 	public int getGeneration()
 	{
