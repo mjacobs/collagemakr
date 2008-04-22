@@ -37,8 +37,7 @@ import java.util.Vector;
 
 public class FlickrComposrApp
 {
-	protected static final int NUM_IMS_W = 2;
-	protected static final int NUM_IMS_H = 2;
+	protected static final int NUM_IMS = 3;
 	protected static final int NUM_CHOICES = 3;
 
 	protected Population _currentPopulation;
@@ -59,7 +58,7 @@ public class FlickrComposrApp
 
 	public FlickrComposrApp()
 	{
-		_currentPopulation = Population.randomPopulation(NUM_IMS_W * NUM_IMS_H);
+		_currentPopulation = Population.randomPopulation(NUM_IMS);
 		choice = new ButtonGroup[NUM_CHOICES];
 		imageTitles = new Vector<String>();
 		for (int i = 0; i < NUM_CHOICES; i++)
@@ -74,7 +73,7 @@ public class FlickrComposrApp
 			jFrame = new JFrame();
 			jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			jFrame.setJMenuBar(getJJMenuBar());
-			jFrame.setSize(800, 600);
+			jFrame.setSize(3*100+50, 400);
 			jFrame.setContentPane(getJContentPane());
 			jFrame.setTitle("Application");
 
@@ -92,32 +91,21 @@ public class FlickrComposrApp
 		if (jContentPane == null)
 		{
 			makrTitle = new JLabel();
-			makrTitle.setText("chooz 3 plz!!!11");
+			makrTitle.setText("chnge ordr plz!!!11");
 			makrTitle.setFont(new Font("Impact", 0, 40));
 			makrTitle.setPreferredSize(new Dimension(232, 80));
 			makrTitle.setHorizontalAlignment(SwingConstants.CENTER);
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new BorderLayout());
 			jContentPane.add(makrTitle, BorderLayout.NORTH);
-
-			TableModel dataModel = new ComposrTableModel(_currentPopulation);
-			JTable table = new JTable(dataModel);
-			table.setRowHeight(255);
-			table.setColumnSelectionAllowed(true);
-			table.setRowSelectionAllowed(true);
-
-			table.setDefaultRenderer(Organism.class, new RankCellRenderer());
-
-			JScrollPane jscrPane = new JScrollPane(table);
-			JPanel votingPanel = new JPanel(new GridLayout(1,6));
-			votingPanel.add(new JLabel("First:"));
-			votingPanel.add(new JComboBox(new DefaultComboBoxModel(imageTitles)));
-			votingPanel.add(new JLabel("Second:"));
-			votingPanel.add(new JComboBox(new DefaultComboBoxModel(imageTitles)));
-			votingPanel.add(new JLabel("Third:"));
-			votingPanel.add(new JComboBox(new DefaultComboBoxModel(imageTitles)));
-			jContentPane.add(jscrPane, BorderLayout.CENTER);
-			jContentPane.add(votingPanel, BorderLayout.SOUTH);
+			JPanel largerView = new JPanel();
+			JPanel thumbsPanel = new ThumbsPanel(_currentPopulation, largerView);
+			JScrollPane jscrPane = new JScrollPane(thumbsPanel);
+			
+			
+			
+			jContentPane.add(jscrPane, BorderLayout.SOUTH);
+			jContentPane.add(largerView, BorderLayout.CENTER);
 		}
 		return jContentPane;
 	}
@@ -280,135 +268,5 @@ public class FlickrComposrApp
 			}
 		});
 	}
-
-	private class RankPanel extends JPanel
-	{
-		public RankPanel(Organism org, int row, int col)
-		{
-			   JPanel pnPanel0 = this;
-			   GridBagLayout gbPanel0 = new GridBagLayout();
-			   GridBagConstraints gbcPanel0 = new GridBagConstraints();
-			   pnPanel0.setLayout( gbPanel0 );
-
-			   JLabel lbLabel0 = new JLabel( ""  );
-			   lbLabel0.setIcon( new ImageIcon( org.getComposition().getImage() ) );
-			   gbcPanel0.gridx = 0;
-			   gbcPanel0.gridy = 0;
-			   gbcPanel0.gridwidth = 1;
-			   gbcPanel0.gridheight = 1;
-			   gbcPanel0.fill = GridBagConstraints.BOTH;
-			   gbcPanel0.weightx = 1;
-			   gbcPanel0.weighty = 1;
-			   gbcPanel0.anchor = GridBagConstraints.NORTH;
-			   gbPanel0.setConstraints( lbLabel0, gbcPanel0 );
-			   pnPanel0.add( lbLabel0 );
-
-			   JLabel lbLabel1 = new JLabel( "Composition " + (row * NUM_IMS_W + col) );
-			   gbcPanel0.gridx = 0;
-			   gbcPanel0.gridy = 1;
-			   gbcPanel0.gridwidth = 1;
-			   gbcPanel0.gridheight = 1;
-			   gbcPanel0.fill = GridBagConstraints.BOTH;
-			   gbcPanel0.weightx = 1;
-			   gbcPanel0.weighty = 1;
-			   gbcPanel0.anchor = GridBagConstraints.NORTH;
-			   gbPanel0.setConstraints( lbLabel1, gbcPanel0 );
-			   pnPanel0.add( lbLabel1 );
-		}
-
-		public RankPanel(Organism org, int row, int column, int j)
-		{
-			JLabel orgImage;
-
-			orgImage = new JLabel("");
-			orgImage.setIcon(new ImageIcon(org.getComposition()
-					.getImage()));
-
-			this.add(orgImage);
-			
-			GridBagLayout gbPanel0 = new GridBagLayout();
-			GridBagConstraints gbcPanel0 = new GridBagConstraints();
-			this.setLayout( gbPanel0 );
-
-			gbcPanel0.gridx = 0;
-			gbcPanel0.gridy = 0;
-			gbcPanel0.gridwidth = 1;
-			gbcPanel0.gridheight = 1;
-			gbcPanel0.fill = GridBagConstraints.BOTH;
-			gbcPanel0.weightx = 1;
-			gbcPanel0.weighty = 1;
-			gbcPanel0.anchor = GridBagConstraints.NORTH;
-			gbPanel0.setConstraints( orgImage, gbcPanel0 );
-			this.add( orgImage );
-
-
-			JLabel lbLabel1 = new JLabel("Composition " + (row * NUM_IMS_W + column));
-			gbcPanel0.gridx = 0;
-			gbcPanel0.gridy = 1;
-			gbcPanel0.gridwidth = 1;
-			gbcPanel0.gridheight = 1;
-			gbcPanel0.fill = GridBagConstraints.BOTH;
-			gbcPanel0.weightx = 1;
-			gbcPanel0.weighty = 1;
-			gbcPanel0.anchor = GridBagConstraints.NORTH;
-			gbPanel0.setConstraints( lbLabel1, gbcPanel0 );
-			this.add( lbLabel1 );
-		}
-	}
-
-	private class RankCellRenderer extends JPanel implements TableCellRenderer
-	{
-
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus, int row,
-				int column)
-		{
-			return new RankPanel((Organism) value, row, column);
-		}
-
-	}
-
-	private class ComposrTableModel extends AbstractTableModel
-	{
-		Organism[][] pModel;
-
-		public ComposrTableModel(Population population)
-		{
-			Organism[] orgs = population.getOrganisms();
-
-			pModel = new Organism[NUM_IMS_H][NUM_IMS_W];
-
-			for (int i = 0; i < NUM_IMS_H; i++)
-			{
-				for (int j = 0; j < NUM_IMS_W; j++)
-				{
-					pModel[i][j] = orgs[i * NUM_IMS_W + j];
-					imageTitles.add("Composition " + (i * NUM_IMS_W + j));
-				}
-			}
-		}
-
-		public int getColumnCount()
-		{
-			return NUM_IMS_W;
-		}
-
-		public int getRowCount()
-		{
-			return NUM_IMS_H;
-		}
-
-		public Object getValueAt(int row, int col)
-		{
-			return (row > NUM_IMS_H) || (col > NUM_IMS_W) ? null
-					: pModel[row][col];
-		}
-
-		@Override
-		public Class getColumnClass(int column)
-		{
-			return getValueAt(0, column).getClass();
-		}
-	};
 
 }
