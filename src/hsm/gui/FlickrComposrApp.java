@@ -10,12 +10,12 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -23,21 +23,14 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
-import java.awt.Point;
-import java.util.Vector;
 
 public class FlickrComposrApp
 {
-	protected static final int NUM_IMS = 3;
+
+	protected static final int NUM_IMS = 8;
 	protected static final int NUM_CHOICES = 3;
 
 	protected Population _currentPopulation;
@@ -53,17 +46,33 @@ public class FlickrComposrApp
 	private JPanel aboutContentPane = null;
 	private JLabel aboutVersionLabel = null;
 	private JLabel makrTitle = null;
-	private Vector<String> imageTitles;
-	protected ButtonGroup[] choice;
+	private ThumbsPanel thumbsPanel;
+	private JMenu genMenu;
+	private JMenuItem genMenuItem;
 
 	public FlickrComposrApp()
 	{
 		_currentPopulation = Population.randomPopulation(NUM_IMS);
-		choice = new ButtonGroup[NUM_CHOICES];
-		imageTitles = new Vector<String>();
-		for (int i = 0; i < NUM_CHOICES; i++)
-			choice[i] = new ButtonGroup();
+	}
 
+	public void nextState()
+	{
+		System.out.println("PRINTING ORDER OF GENERATION:");
+		if (thumbsPanel != null)
+		{
+			LinkedList<Organism> orgs = thumbsPanel.getOrganismsList();
+			for (int i = 0; i < orgs.size(); i++)
+			{
+				Organism o = orgs.get(i);
+				o.printGenome();
+				o.setFitness(1 - ((i+1) / orgs.size()));
+			}
+			
+			_currentPopulation = _currentPopulation.nextGeneration();
+			
+			jContentPane = null;
+			jFrame.setContentPane(getJContentPane());
+		}
 	}
 
 	private JFrame getJFrame()
@@ -75,7 +84,7 @@ public class FlickrComposrApp
 			jFrame.setJMenuBar(getJJMenuBar());
 			jFrame.setSize(3*100+50, 400);
 			jFrame.setContentPane(getJContentPane());
-			jFrame.setTitle("Application");
+			jFrame.setTitle("Flickr Composr Application");
 
 		}
 		return jFrame;
@@ -99,17 +108,14 @@ public class FlickrComposrApp
 			jContentPane.setLayout(new BorderLayout());
 			jContentPane.add(makrTitle, BorderLayout.NORTH);
 			JPanel largerView = new JPanel();
-			JPanel thumbsPanel = new ThumbsPanel(_currentPopulation, largerView);
+			thumbsPanel = new ThumbsPanel(_currentPopulation, largerView);
 			JScrollPane jscrPane = new JScrollPane(thumbsPanel);
-			
-			
-			
 			jContentPane.add(jscrPane, BorderLayout.SOUTH);
-			jContentPane.add(largerView, BorderLayout.CENTER);
+			jContentPane.add(new JScrollPane(largerView), BorderLayout.CENTER);
 		}
 		return jContentPane;
 	}
-
+	
 	/**
 	 * This method initializes jJMenuBar
 	 * 
@@ -122,8 +128,38 @@ public class FlickrComposrApp
 			jJMenuBar = new JMenuBar();
 			jJMenuBar.add(getFileMenu());
 			jJMenuBar.add(getHelpMenu());
+			jJMenuBar.add(getGenerationMenu());
 		}
 		return jJMenuBar;
+	}
+
+	private JMenu getGenerationMenu()
+	{
+		if (genMenu == null)
+		{
+			genMenu = new JMenu();
+			genMenu.setText("Next Generation");
+			genMenu.add(getNextGenItem());
+		}
+		return genMenu;
+	}
+
+	private JMenuItem getNextGenItem()
+	{
+		if (genMenuItem == null)
+		{
+			genMenuItem = new JMenuItem();
+			genMenuItem.setText("Go!");
+			genMenuItem.addActionListener(new ActionListener()
+			{
+
+				public void actionPerformed(ActionEvent e)
+				{
+					nextState();
+				}
+			});
+		}
+		return genMenuItem;
 	}
 
 	/**
