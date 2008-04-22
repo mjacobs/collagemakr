@@ -86,7 +86,7 @@ public class ThumbsPanel extends JPanel
 	    // draw original image to thumbnail image object and
 	    // scale it to the new size on-the-fly
 	    BufferedImage thumbImage = new BufferedImage(thumbWidth, 
-	      thumbHeight, BufferedImage.TYPE_INT_RGB);
+	      thumbHeight, BufferedImage.TYPE_4BYTE_ABGR);
 	    Graphics2D graphics2D = thumbImage.createGraphics();
 	    graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 	      RenderingHints.VALUE_INTERPOLATION_BILINEAR);
