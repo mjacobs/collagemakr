@@ -6,8 +6,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.mathworks.jmi.*;
-
 public class GrabCutExtractor implements IExtractor
 {
 	private static String FS = System.getProperty("file.separator");
