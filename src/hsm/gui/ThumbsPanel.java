@@ -1,5 +1,6 @@
 package hsm.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -15,9 +16,12 @@ import java.util.LinkedList;
 import java.util.List;
 import hsm.evo.Organism;
 import hsm.evo.Population;
+
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 
 public class ThumbsPanel extends JPanel
 {
@@ -100,7 +104,10 @@ public class ThumbsPanel extends JPanel
 		public ThumbLabel(Organism o)
 		{
 			super(new ImageIcon(makeThumb(o.getComposition().getImage(), THUMB_W, THUMB_H)));
+			
 			this.o = o;
+			setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+			o.setFitness(0);
 		}
 		
 		public Organism getOrganism()
@@ -116,13 +123,18 @@ public class ThumbsPanel extends JPanel
 			Organism o = ((ThumbLabel) e.getSource()).getOrganism();
 			if (o.getFitness() == 1.0)
 			{
-				((ThumbLabel) e.getSource()).setBorder(null);
+				((ThumbLabel) e.getSource()).setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 				o.setFitness(0);
 			}
 			else
 			{
+				((ThumbLabel) e.getSource()).setBorder(BorderFactory.createLineBorder(Color.GREEN));
 				o.setFitness(1.0);
 			}
+			largeDisplay.removeAll();
+			largeDisplay.add(new JLabel(new ImageIcon(o.getComposition().getImage())));
+			largeDisplay.repaint();
+			largeDisplay.revalidate();
 		}
 		public void mouseEntered(MouseEvent e) { }
 		public void mouseExited(MouseEvent e) {	}
