@@ -2,9 +2,9 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 
 <properties>
-    <entry key="offline">false</entry>
+    <entry key="offline">true</entry>
     <entry key="offline_dir">data/flickr_local/</entry>
-    <entry key="canvas_width">500</entry>
-    <entry key="canvas_height">500</entry>
-    <entry key="flickr_size">small</entry>
+    <entry key="canvas_width">250</entry>
+    <entry key="canvas_height">250</entry>
+    <entry key="flickr_size">medium</entry>
 </properties>
