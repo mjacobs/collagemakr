@@ -7,6 +7,7 @@ import hsm.image.DirectorySource;
 import hsm.image.ImageException;
 import hsm.image.FlickrSource;
 import hsm.image.ImageSource;
+import hsm.tools.GrabCutExtractor;
 import hsm.tools.IExtractor;
 import hsm.tools.SimpleExtractor;
 
@@ -59,7 +60,7 @@ public class TreeGenerator {
 			
 			// TODO: Abstract the creation of the extractor so that we're not hard coding in
 			// a new simpleextractor
-			_extract = new SimpleExtractor();
+			_extract = new GrabCutExtractor();
 			
 			if (Config.getConfig().getBoolean(OFFLINE))
 			{

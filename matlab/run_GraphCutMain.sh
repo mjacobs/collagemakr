@@ -36,6 +36,6 @@ else
   export XAPPLRESDIR;
   echo LD_LIBRARY_PATH is ${LD_LIBRARY_PATH};
   shift 1
-./GraphCutMain $*
+matlab/GraphCutMain $*
 fi
 exit
