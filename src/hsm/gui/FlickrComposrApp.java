@@ -44,6 +44,7 @@ public class FlickrComposrApp
 	private ThumbsPanel thumbsPanel;
 	private JMenu genMenu;
 	private JMenuItem genMenuItem;
+	private JMenuItem restartItem;
 
 	public FlickrComposrApp()
 	{
@@ -135,7 +136,7 @@ public class FlickrComposrApp
 		if (genMenu == null)
 		{
 			genMenu = new JMenu();
-			genMenu.setText("Next Generation");
+			genMenu.setText("Operations");
 			genMenu.add(getNextGenItem());
 		}
 		return genMenu;
@@ -146,7 +147,7 @@ public class FlickrComposrApp
 		if (genMenuItem == null)
 		{
 			genMenuItem = new JMenuItem();
-			genMenuItem.setText("Go!");
+			genMenuItem.setText("Next Generation");
 			genMenuItem.addActionListener(new ActionListener()
 			{
 
@@ -157,6 +158,25 @@ public class FlickrComposrApp
 			});
 		}
 		return genMenuItem;
+	}
+	
+
+	private JMenuItem getRestartItem()
+	{
+		if (restartItem == null)
+		{
+			restartItem = new JMenuItem();
+			restartItem.setText("Restart");
+			restartItem.addActionListener(new ActionListener()
+			{
+
+				public void actionPerformed(ActionEvent e)
+				{
+					nextState();
+				}
+			});
+		}
+		return restartItem;
 	}
 
 	/**
