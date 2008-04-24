@@ -9,6 +9,7 @@ import hsm.image.FlickrSource;
 import hsm.image.ImageSource;
 import hsm.tools.GrabCutExtractor;
 import hsm.tools.IExtractor;
+import hsm.tools.LuminanceExtractor;
 import hsm.tools.SimpleExtractor;
 
 import java.awt.geom.Point2D;
@@ -60,7 +61,7 @@ public class TreeGenerator {
 			
 			// TODO: Abstract the creation of the extractor so that we're not hard coding in
 			// a new simpleextractor
-			_extract = new GrabCutExtractor();
+			_extract = new LuminanceExtractor();
 			
 			if (Config.getConfig().getBoolean(OFFLINE))
 			{
