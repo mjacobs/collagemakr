@@ -15,11 +15,17 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class TreeGenerator {
-	public final static int DEFAULT_DEPTH = 5;
+
 	public final static String OFFLINE = "offline";
 	public final static String OFFLINE_DIR = "offline_dir";
 	public final static String CANVAS_WIDTH = "canvas_width";
 	public final static String CANVAS_HEIGHT = "canvas_height";
+	public final static String NEW_TREE_HEIGHT = "new_tree_height";
+	
+	public static int getNewTreeDepth()
+	{
+		return Config.getConfig().getInt(NEW_TREE_HEIGHT);
+	}
 	
 	static
 	{
@@ -27,6 +33,7 @@ public class TreeGenerator {
 		Config.getConfig().registerString(OFFLINE_DIR, ".");
 		Config.getConfig().registerInt(CANVAS_WIDTH, 250);
 		Config.getConfig().registerInt(CANVAS_HEIGHT, 250);
+		Config.getConfig().registerInt(NEW_TREE_HEIGHT, 5);
 		
 	}
 	
@@ -199,7 +206,7 @@ public class TreeGenerator {
 	{
 		if (maxDepth > 0)
 		{
-			return randomOperationNode(maxDepth-1);
+			return randomOperationNode(maxDepth);
 		}
 		else
 		{

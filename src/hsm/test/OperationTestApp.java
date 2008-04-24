@@ -1,5 +1,6 @@
 package hsm.test;
 
+import hsm.evo.LinearMotionBlurOperation;
 import hsm.evo.RotateOperation;
 import hsm.image.*;
 
@@ -82,7 +83,7 @@ public class OperationTestApp {
 	{
 		LayerFrame _frame;
 		LayerImage _img1, _img2;
-		float _ang = 0.0f;
+		float _ang = 1.0f;
 		int _step = 0;
 		RenderingHints _hints;
 		
@@ -108,24 +109,16 @@ public class OperationTestApp {
 			
 			HashMap<String, Double> props = new HashMap<String, Double>();
 			props.put("angle", (double)_ang);
-			props.put("x", 320.0);
-			props.put("y", 240.0);
+			props.put("distance", 10.0);
 			
-			ImageOperation op1 = new RotateOperation().initWithParameters(props);
+			ImageOperation op1 = new LinearMotionBlurOperation().initWithParameters(props);
 			
 			ImageOperation op2 = new CompositeAdaptor(AlphaComposite.Xor);
 			
-			if ((_step % 2) == 0)
-			{
-				_frame.setImage(op2.perform(op1.perform(_img1), _img2));
-			}
-			else
-			{
-				_frame.setImage(op2.perform(_img1, _img2));
-			}
+			_frame.setImage(op2.perform(op1.perform(_img1), _img2));
 			
-			//_ang += 0.01f;
-			_step++;
+			_ang += 0.01f;
+			//_step++;
 		}
 		
 	}

@@ -67,7 +67,7 @@ public class AffineTransformOperation extends ImageOperation {
 		BufferedImage dstImg = op.createCompatibleDestImage(imgData, ColorModel.getRGBdefault());
 		Graphics2D g2d = dstImg.createGraphics();
 		g2d.drawImage(img.getImage(), op, 0, 0);
-		
+		g2d.dispose();
 		// and return a layer image starting at the proper origin
 		return new LayerImage(dstImg, new Point2D.Double(transBounds.getMinX(), transBounds.getMinY()));
 	}

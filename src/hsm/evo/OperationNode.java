@@ -83,7 +83,7 @@ public class OperationNode extends ExpressionNode {
 			
 			for (int i=origChildren.length; i<dstOp.getNumberOfInputs(); i++)
 			{
-				result[i] = TreeGenerator.randomNode(TreeGenerator.DEFAULT_DEPTH);
+				result[i] = TreeGenerator.randomNode(TreeGenerator.getNewTreeDepth());
 			}
 		}
 		
@@ -228,17 +228,17 @@ public class OperationNode extends ExpressionNode {
 				case UNWRAP:
 					// replace self with child
 					return _children[(int)(Math.random()*_children.length)]
-					                 .createMutatedInternal(_mutationProb);
+					                 .createMutatedInternal(getBaseMutationProbability());
 					
 				case COPY_SIBLING:
 					return new OperationNode(_operation, mutateChildren(copyChild(_children, (int)Math.random()*_children.length, 
 																			  (int)Math.random()*_children.length)));
 					
 				case REPLACE:
-					return TreeGenerator.randomNode(TreeGenerator.DEFAULT_DEPTH);
+					return TreeGenerator.randomNode(TreeGenerator.getNewTreeDepth());
 					
 				case OP_WRAP:
-					return TreeGenerator.randomOperationNode(TreeGenerator.DEFAULT_DEPTH, this);
+					return TreeGenerator.randomOperationNode(TreeGenerator.getNewTreeDepth(), this);
 					
 				default:
 					return null;

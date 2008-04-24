@@ -66,7 +66,7 @@ public class LayerImage {
 			
 			g.drawImage(_image, new AffineTransformOp(imageToCanvasTransform(), AffineTransformOp.TYPE_BILINEAR), 
 					    0, 0);
-			
+			g.dispose();
 			return result;
 		}
 		
