@@ -3,6 +3,7 @@ package hsm.global;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
@@ -60,6 +61,16 @@ public class Config extends Properties {
 		return Integer.parseInt(this.getProperty(key));
 	}
 	
+	public void registerDouble(String key, double def)
+	{
+		defaults.setProperty(key, Double.toString(def));
+	}
+	
+	public double getDouble(String key)
+	{
+		return Double.parseDouble(this.getProperty(key));
+	}
+	
 	public void registerString(String key, String def)
 	{
 		defaults.setProperty(key, def);
@@ -68,5 +79,29 @@ public class Config extends Properties {
 	public String getString(String key)
 	{
 		return this.getProperty(key);
+	}
+	
+	public void setString(String key, String value)
+	{
+		this.setProperty(key, value);
+	}
+	
+	public void save()
+	{
+		try {
+			System.out.println("Saving configuration...");
+			this.storeToXML(new FileOutputStream(g_configFile), null);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void finalize() throws Throwable
+	{
+		save();
+		
+		super.finalize();
 	}
 }

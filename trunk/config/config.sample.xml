@@ -7,4 +7,6 @@
     <entry key="canvas_width">250</entry>
     <entry key="canvas_height">250</entry>
     <entry key="flickr_size">medium</entry>
+    <entry key="mutation_prob">0.5</entry>
+<entry key="new_tree_height">7</entry>
 </properties>

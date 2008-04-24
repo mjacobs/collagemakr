@@ -2,6 +2,7 @@ package hsm.evo;
 
 import java.util.HashMap;
 
+import hsm.global.Config;
 import hsm.image.LayerImage;
 
 public abstract class ExpressionNode {
@@ -9,7 +10,7 @@ public abstract class ExpressionNode {
 	public abstract LayerImage evaluate();
 	
 	// mutation
-	public final ExpressionNode createMutated() { return createMutatedInternal(_mutationProb); }
+	public final ExpressionNode createMutated() { return createMutatedInternal(getBaseMutationProbability()); }
 	public abstract ExpressionNode createMutatedInternal(double mutationProbability);
 	
 	protected enum MutationType
@@ -24,10 +25,17 @@ public abstract class ExpressionNode {
 	
 	protected static HashMap<MutationType, Double> _typeProbs;
 	protected static HashMap<MutationType, Boolean> _typeOnlyOp; 
-	protected static final double _mutationProb = 0.2;
+	public final static String MUTATION_PROB = "mutation_prob";
+	
+	public static double getBaseMutationProbability()
+	{
+		return Config.getConfig().getDouble(MUTATION_PROB);
+	}
 	
 	static
 	{
+		Config.getConfig().registerDouble(MUTATION_PROB, 0.2);
+		
 		_typeProbs = new HashMap<MutationType, Double>();
 		_typeOnlyOp = new HashMap<MutationType, Boolean>();
 		
@@ -100,11 +108,11 @@ public abstract class ExpressionNode {
 	{
 		if (exprLen == 0)
 		{
-			return _mutationProb;
+			return getBaseMutationProbability();
 		}
 		else
 		{
-			return _mutationProb/exprLen;
+			return getBaseMutationProbability()/exprLen;
 		}
 	}
 	

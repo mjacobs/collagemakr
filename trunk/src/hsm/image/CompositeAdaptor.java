@@ -59,7 +59,7 @@ public class CompositeAdaptor extends ImageOperation {
 	            							AffineTransformOp.TYPE_BILINEAR), 0, 0);
 		g2d.drawImage(src.getImage(), new AffineTransformOp(AffineTransform.getTranslateInstance(srcPos.x, srcPos.y), 
 												AffineTransformOp.TYPE_BILINEAR), 0, 0);
-		
+		g2d.dispose();
 		return new LayerImage(result, new Point2D.Double(resultRect.getMinX(), resultRect.getMinY()));
 	}
 

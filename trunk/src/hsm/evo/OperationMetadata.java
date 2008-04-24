@@ -70,6 +70,11 @@ public final class OperationMetadata {
 				Class.forName ("hsm.evo.TranslateOperation");
 				Class.forName ("hsm.evo.ScaleOperation");
 				Class.forName ("hsm.evo.RotateOperation");
+				Class.forName ("hsm.evo.InvertOperation");
+				Class.forName ("hsm.evo.ShadowOperation");
+				Class.forName ("hsm.evo.SolarizeOperation");
+				Class.forName ("hsm.evo.BlurOperation");
+				Class.forName ("hsm.evo.LinearMotionBlurOperation");
 			} catch (ClassNotFoundException e) {
 			}
 		}
