@@ -3,6 +3,7 @@ package hsm.test;
 import hsm.image.FlickrSource;
 import hsm.image.ImageException;
 import hsm.image.ImageSource;
+import hsm.tools.GrabCutExtractor;
 import hsm.tools.IExtractor;
 import hsm.tools.SimpleExtractor;
 
@@ -59,7 +60,7 @@ public class ImageTestApp {
 		
 		public ChangeImagePerformer(ImageFrame inFrame)
 		{
-			_ex = new SimpleExtractor();
+			_ex = new GrabCutExtractor();
 			_frame = inFrame;
 			try {
 				_src = new FlickrSource();
