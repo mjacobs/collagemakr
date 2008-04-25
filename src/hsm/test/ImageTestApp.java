@@ -3,8 +3,8 @@ package hsm.test;
 import hsm.image.FlickrSource;
 import hsm.image.ImageException;
 import hsm.image.ImageSource;
-import hsm.tools.GrabCutExtractor;
 import hsm.tools.IExtractor;
+import hsm.tools.LuminanceExtractor;
 import hsm.tools.SimpleExtractor;
 
 import java.awt.Graphics;
@@ -60,7 +60,7 @@ public class ImageTestApp {
 		
 		public ChangeImagePerformer(ImageFrame inFrame)
 		{
-			_ex = new GrabCutExtractor();
+			_ex = new LuminanceExtractor();
 			_frame = inFrame;
 			try {
 				_src = new FlickrSource();

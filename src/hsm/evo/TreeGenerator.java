@@ -7,7 +7,6 @@ import hsm.image.DirectorySource;
 import hsm.image.ImageException;
 import hsm.image.FlickrSource;
 import hsm.image.ImageSource;
-import hsm.tools.GrabCutExtractor;
 import hsm.tools.IExtractor;
 import hsm.tools.LuminanceExtractor;
 import hsm.tools.SimpleExtractor;
