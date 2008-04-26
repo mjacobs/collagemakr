@@ -42,7 +42,16 @@ public class TreeGenerator {
 	{
 		private static GenerationContext _ctx = null;
 		private IExtractor[] _extractors = { new LuminanceExtractor(), new SimpleExtractor() };
+		private double[] _probs = { Config.getConfig().getDouble("prob_extract_luminance"), 
+								    Config.getConfig().getDouble("prob_extract_magicwand") };
 		private ImageSource _source;
+		
+		static
+		{
+			Config.getConfig().registerDouble("prob_extract_luminance", 1.0);
+			Config.getConfig().registerDouble("prob_extract_magicwand", 1.0);
+			
+		}
 		
 		public static GenerationContext getContext()
 		{
@@ -78,7 +87,21 @@ public class TreeGenerator {
 		
 		public IExtractor randomExtractor()
 		{
-			return _extractors[(int)(Math.random()*_extractors.length)];
+			double maxProb = Double.NEGATIVE_INFINITY;
+			
+			for (double d : _probs)
+			{
+				if (d > maxProb) maxProb = d;
+			}
+			
+			int randIdx;
+			
+			do
+			{
+				randIdx = (int)(Math.random()*_extractors.length);
+			} while(Math.random()*maxProb > _probs[randIdx]);
+			
+			return _extractors[randIdx];
 		}
 		
 		public ImageSource getSource()
