@@ -52,6 +52,11 @@ public class ElementNode extends ExpressionNode {
 		}
 	}
 	
+	public int countLeaves()
+	{
+		return 1;
+	}
+	
 	public void print(String indent)
 	{
 		System.out.println(indent + "leaf image " + _source.getTitle());

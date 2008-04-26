@@ -1,6 +1,7 @@
 package hsm.evo;
 
 import hsm.evo.OperationMetadata.PropertyData;
+import hsm.global.Config;
 import hsm.image.AffineTransformOperation;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
@@ -9,7 +10,11 @@ public class ScaleOperation extends ParametrizedOperationAdaptor {
 
 	static
 	{
-		PropertyData d = OperationMetadata.getInstance().registerOperation(ScaleOperation.class);
+		OperationMetadata om = OperationMetadata.getInstance();
+		Config.getConfig().registerDouble("prob_scale", 1.0);
+		
+		PropertyData d = om.registerOperation(ScaleOperation.class);
+		om.setOperationProbability(ScaleOperation.class, Config.getConfig().getDouble("prob_scale"));
 		d.putProperty("x", 0.1, 2.0);
 		d.putProperty("y", 0.1, 2.0);
 	}

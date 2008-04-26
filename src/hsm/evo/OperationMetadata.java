@@ -77,6 +77,7 @@ public final class OperationMetadata {
 				Class.forName ("hsm.evo.LinearMotionBlurOperation");
 			} catch (ClassNotFoundException e) {
 			}
+			
 		}
 		
 		return g_instance;
@@ -137,4 +138,6 @@ public final class OperationMetadata {
 		// ACTUALLY a probability density
 		return _selectionProbs.get(opClass)/_maxProb;
 	}
+	
+	
 }

@@ -1,6 +1,7 @@
 package hsm.evo;
 
 import hsm.evo.OperationMetadata.PropertyData;
+import hsm.global.Config;
 import hsm.image.BufferedImageOpAdaptor;
 import java.util.HashMap;
 
@@ -10,8 +11,9 @@ public class BlurOperation extends ParametrizedOperationAdaptor {
 	static
 	{
 		OperationMetadata om = OperationMetadata.getInstance();
+		Config.getConfig().registerDouble("prob_blur", 1.0);
 		PropertyData p = om.registerOperation(BlurOperation.class);
-		om.setOperationProbability(DissolveOperation.class, 1.5);
+		om.setOperationProbability(BlurOperation.class, Config.getConfig().getDouble("prob_blur"));
 		
 		p.putProperty("radius", 1.0, 10.0);
 	}
