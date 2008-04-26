@@ -1,6 +1,7 @@
 package hsm.evo;
 
 import hsm.evo.OperationMetadata.PropertyData;
+import hsm.global.Config;
 import hsm.image.LayerImage;
 
 import java.awt.geom.Point2D;
@@ -9,7 +10,12 @@ public class TranslateOperation extends ParametrizedOperation {
 
 	static
 	{
-		PropertyData d = OperationMetadata.getInstance().registerOperation(TranslateOperation.class);
+		OperationMetadata om = OperationMetadata.getInstance();
+		
+		Config.getConfig().registerDouble("prob_translate", 1.0);
+		
+		PropertyData d = om.registerOperation(TranslateOperation.class);
+		om.setOperationProbability(TranslateOperation.class, Config.getConfig().getDouble("prob_translate"));
 		d.putProperty("x", -100.0, 100.0);
 		d.putProperty("y", -100.0, 100.0);
 	}

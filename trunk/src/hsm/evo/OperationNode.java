@@ -340,5 +340,17 @@ public class OperationNode extends ExpressionNode {
 	protected ExpressionNode visit(ExpressionNode expr) {
 		return expr.createMatedWithOperation(this);
 	}
+	
+	public int countLeaves()
+	{
+		int ct = 0;
+		
+		for (ExpressionNode n : _children)
+		{
+			ct += n.countLeaves();
+		}
+		
+		return ct;
+	}
 
 }

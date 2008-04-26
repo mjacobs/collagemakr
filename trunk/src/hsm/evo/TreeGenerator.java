@@ -41,7 +41,7 @@ public class TreeGenerator {
 	private static class GenerationContext
 	{
 		private static GenerationContext _ctx = null;
-		private IExtractor _extract;
+		private IExtractor[] _extractors = { new LuminanceExtractor(), new SimpleExtractor() };
 		private ImageSource _source;
 		
 		public static GenerationContext getContext()
@@ -60,7 +60,6 @@ public class TreeGenerator {
 			
 			// TODO: Abstract the creation of the extractor so that we're not hard coding in
 			// a new simpleextractor
-			_extract = new LuminanceExtractor();
 			
 			if (Config.getConfig().getBoolean(OFFLINE))
 			{
@@ -77,9 +76,9 @@ public class TreeGenerator {
 			}		
 		}
 		
-		public IExtractor getExtractor()
+		public IExtractor randomExtractor()
 		{
-			return _extract;
+			return _extractors[(int)(Math.random()*_extractors.length)];
 		}
 		
 		public ImageSource getSource()
@@ -88,7 +87,7 @@ public class TreeGenerator {
 		}
 	}
 	
-	private static Class<?> randomOperationClass()
+	public static Class<?> randomOperationClass()
 	{
 		OperationMetadata om = OperationMetadata.getInstance();
 		Class<?>[] classes = om.getOperationClasses();
@@ -103,7 +102,7 @@ public class TreeGenerator {
 		return currClass;
 	}
 	
-	private static HashMap<String, Double> randomParametersForClass(Class<?> c)
+	public static HashMap<String, Double> randomParametersForClass(Class<?> c)
 	{
 		PropertyData props = OperationMetadata.getInstance().getPropertyData(c);
 		HashMap<String, Double> result = new HashMap<String, Double>();
@@ -189,7 +188,7 @@ public class TreeGenerator {
 		while (extractedImage == null)
 		{
 			randImage = GenerationContext.getContext().getSource().getRandomImage();
-			extractedImage = GenerationContext.getContext().getExtractor().getExtract(randImage.getImage());
+			extractedImage = GenerationContext.getContext().randomExtractor().getExtract(randImage.getImage());
 		}
 		
 		System.out.println("done.");

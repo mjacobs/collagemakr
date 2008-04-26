@@ -126,6 +126,8 @@ public abstract class ExpressionNode {
 	protected abstract ExpressionNode createMatedWithLeaf(ElementNode op);
 	protected abstract ExpressionNode createMatedWithOperation(OperationNode op);
 	
+	public abstract int countLeaves();
+	
 	public abstract void print(String prefix);
 	public void print() { print(""); }
 	

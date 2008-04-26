@@ -8,5 +8,17 @@
     <entry key="canvas_height">250</entry>
     <entry key="flickr_size">medium</entry>
     <entry key="mutation_prob">0.5</entry>
-<entry key="new_tree_height">7</entry>
+	<entry key="new_tree_height">7</entry>
+	
+	<entry key="prob_blur">1.5</entry>
+	<entry key="prob_compositeover">7.0</entry>
+	<entry key="prob_compositexor">1.5</entry>
+	<entry key="prob_dissolve">0.5</entry>
+	<entry key="prob_invert">1.5</entry>
+	<entry key="prob_linearmotionblur">1.5</entry>
+	<entry key="prob_rotate">1.0</entry>
+	<entry key="prob_scale">1.0</entry>
+	<entry key="prob_translate">1.0</entry>
+	<entry key="prob_shadow">1.5</entry>
+	<entry key="prob_solarize">0.5</entry>
 </properties>

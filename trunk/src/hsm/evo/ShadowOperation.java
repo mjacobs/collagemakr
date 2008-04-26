@@ -1,6 +1,7 @@
 package hsm.evo;
 
 import hsm.evo.OperationMetadata.PropertyData;
+import hsm.global.Config;
 import hsm.image.BufferedImageOpAdaptor;
 import java.util.HashMap;
 import com.jhlabs.image.ShadowFilter;
@@ -9,8 +10,10 @@ public class ShadowOperation extends ParametrizedOperationAdaptor {
 	static
 	{
 		OperationMetadata om = OperationMetadata.getInstance();
+		Config.getConfig().registerDouble("prob_shadow", 1.0);
+		
 		PropertyData p = om.registerOperation(ShadowOperation.class);
-		om.setOperationProbability(DissolveOperation.class, 1.5);
+		om.setOperationProbability(ShadowOperation.class, Config.getConfig().getDouble("prob_shadow"));
 		
 		p.putProperty("angle", 0.0, 2.0*Math.PI);
 		p.putProperty("distance", 0.1, 10.0);
