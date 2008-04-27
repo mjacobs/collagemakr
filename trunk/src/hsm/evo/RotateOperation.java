@@ -15,8 +15,8 @@ public class RotateOperation extends ParametrizedOperationAdaptor {
 		
 		PropertyData d = om.registerOperation(RotateOperation.class);
 		om.setOperationProbability(RotateOperation.class, Config.getConfig().getDouble("prob_rotate"));
-		d.putProperty("x", 0.0, 500.0);
-		d.putProperty("y", 0.0, 500.0);
+		d.putProperty("x", 0.0, Config.getConfig().getInt(TreeGenerator.CANVAS_WIDTH));
+		d.putProperty("y", 0.0, Config.getConfig().getInt(TreeGenerator.CANVAS_HEIGHT));
 		d.putProperty("angle", 0.0, 2.0*Math.PI);
 	}
 

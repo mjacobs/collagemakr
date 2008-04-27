@@ -73,9 +73,11 @@ public class FlickrSource implements ImageSource {
 		// create the query
 		_query = new SearchParameters();
 		_query.setSafeSearch(Flickr.SAFETYLEVEL_SAFE);
-		_query.setText("e");
-		_query.setLicense("4,5,2,1");
-		_query.setExtrasLicense(true);
+		//_query.setText("llama");
+		String tgs[] = {"llama"};
+		_query.setTags(tgs);
+		//_query.setLicense("4,5,2,1");
+		//_query.setExtrasLicense(true);
 		_query.setExtrasOwnerName(true);
 		_query.setExtrasTags(true);
 		

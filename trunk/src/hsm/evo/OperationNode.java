@@ -9,7 +9,7 @@ import hsm.image.LayerImage;
 
 public class OperationNode extends ExpressionNode {
 
-
+	private int _numDesc = -1;
 	private ExpressionNode[] _children;
 	private ParametrizedOperation _operation;
 	
@@ -352,5 +352,77 @@ public class OperationNode extends ExpressionNode {
 		
 		return ct;
 	}
-
+	
+	public int countDescendantsAndSelf()
+	{
+		if (_numDesc == -1)
+		{
+			int ct = _children.length;
+			
+			for (ExpressionNode n : _children)
+			{
+				ct += n.countDescendantsAndSelf();
+			}
+			
+			_numDesc = ct;
+		}
+		
+		return _numDesc;
+	}
+	
+	protected ExpressionNode selectRandomDescendantOrSelf()
+	{
+		int subtreeSize = countDescendantsAndSelf();
+		int[] counts = new int[_children.length];
+		
+		for (int i=0; i<counts.length; i++)
+		{
+			counts[i] = _children[i].countDescendantsAndSelf();
+		}
+		
+		int randSelect = (int)(Math.random()*subtreeSize);
+		
+		if (randSelect == subtreeSize-1)
+		{
+			return this;
+		}
+		else
+		{
+			int cdfi = 0;
+			for (int i=0; i<counts.length; i++)
+			{
+				cdfi += counts[i];
+				
+				if (randSelect < cdfi)
+				{
+					return _children[i];
+				}
+			}
+			
+			// something went terribly wrong
+			assert(false);
+			
+			return null;
+		}
+	}
+	 
+	protected ExpressionNode replaceDescendantOrSelf(ExpressionNode replaceThis, ExpressionNode withThis)
+	{
+		if (replaceThis != this)
+		{
+			ExpressionNode[] newChildren = new ExpressionNode[_children.length];
+			
+			for (int i=0; i<newChildren.length; i++)
+			{
+				newChildren[i] = _children[i].replaceDescendantOrSelf(replaceThis, withThis);
+			}
+			
+			return new OperationNode(_operation, newChildren);
+		}
+		else
+		{
+			return withThis;
+		}
+	}
+	
 }
