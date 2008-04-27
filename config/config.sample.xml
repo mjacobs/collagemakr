@@ -24,4 +24,13 @@
 
 	<entry key="prob_extract_luminance">1.0</entry>
 	<entry key="prob_extract_magicwand">1.0</entry>
+	
+	<entry key="crossover">true</entry>
+	
+	<entry key="prob_mutation_replace">1.0</entry>
+	<entry key="prob_mutation_jitter">50.0</entry>
+	<entry key="prob_mutation_op_swap">1.0</entry>
+	<entry key="prob_mutation_op_wrap">1.0</entry>
+	<entry key="prob_mutation_unwrap">1.0</entry>
+	<entry key="prob_mutation_copy_sibling">1.0</entry>
 </properties>

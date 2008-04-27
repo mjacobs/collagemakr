@@ -93,4 +93,26 @@ public class ElementNode extends ExpressionNode {
 		return expr.createMatedWithLeaf(this);
 	}
 	
+	public int countDescendantsAndSelf()
+	{
+		return 0;
+	}
+	
+	protected ExpressionNode selectRandomDescendantOrSelf()
+	{
+		return this;
+	}
+	
+	protected ExpressionNode replaceDescendantOrSelf(ExpressionNode replaceThis, ExpressionNode withThis)
+	{
+		if (replaceThis != this)
+		{
+			return this;
+		}
+		else
+		{
+			return withThis;
+		}
+	}
+	
 }
