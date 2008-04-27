@@ -75,7 +75,16 @@ public final class OperationMetadata {
 				Class.forName ("hsm.evo.SolarizeOperation");
 				Class.forName ("hsm.evo.BlurOperation");
 				Class.forName ("hsm.evo.LinearMotionBlurOperation");
+				Class.forName ("hsm.evo.CompositeAddOperation");
+				Class.forName ("hsm.evo.CompositeDifferenceOperation");
+				Class.forName ("hsm.evo.CompositeScreenOperation");
+				Class.forName ("hsm.evo.CompositeNegationOperation");
+				Class.forName ("hsm.evo.CompositeExclusionOperation");
+				Class.forName ("hsm.evo.CompositeBrightnessOperation");
+				Class.forName ("hsm.evo.CompositeDodgeOperation");
+				Class.forName ("hsm.evo.CompositeLightenOperation");
 			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
 			}
 			
 		}

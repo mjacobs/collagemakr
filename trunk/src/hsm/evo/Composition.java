@@ -25,7 +25,7 @@ public class Composition {
 	{
 		if (_cachedImage == null)
 		{
-			System.out.print("Evaluating tree...");
+			System.out.print("Rendering tree...");
 			BufferedImage img = _root.evaluate().getFlattenedImage();
 			System.out.println("done.");
 			int canvasWidth = Config.getConfig().getInt(TreeGenerator.CANVAS_WIDTH);

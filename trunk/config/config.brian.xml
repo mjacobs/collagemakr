@@ -12,8 +12,16 @@
 <entry key="new_tree_height">6</entry>
 
 	<entry key="prob_blur">1.0</entry>
-	<entry key="prob_compositeover">10.0</entry>
+	<entry key="prob_compositeover">1.0</entry>
 	<entry key="prob_compositexor">0.0</entry>
+	<entry key="prob_compositeadd">1.0</entry>
+	<entry key="prob_compositedifference">1.0</entry>
+	<entry key="prob_compositescreen">1.0</entry>
+	<entry key="prob_compositenegation">1.0</entry>
+	<entry key="prob_compositeexclusion">1.0</entry>
+	<entry key="prob_compositebrightness">1.0</entry>
+	<entry key="prob_compositedodge">2.0</entry>
+	<entry key="prob_compositelighten">1.0</entry>
 	<entry key="prob_dissolve">1.0</entry>
 	<entry key="prob_invert">1.0</entry>
 	<entry key="prob_linearmotionblur">1.0</entry>
