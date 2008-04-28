@@ -6,11 +6,15 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +24,9 @@ import hsm.evo.Population;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.border.LineBorder;
 
 public class ThumbsPanel extends JPanel
@@ -46,11 +52,18 @@ public class ThumbsPanel extends JPanel
 
 	private void addOrganisms()
 	{
-		ThumbDragListener tdl = new ThumbDragListener();
+		JMenuItem menuItem;
+		JPopupMenu popup = new JPopupMenu();
+		menuItem = new JMenuItem("Accept");
+		//menuItem.addActionListener();
+		popup.add(menuItem);
+		menuItem = new JMenuItem("Reject");
+		//menuItem.addActionListener();
+		popup.add(menuItem);
+		
 		for (int i = 0; i < orgs.size(); i++)
 		{
-			Component tl = new ThumbLabel(orgs.get(i));
-			tl.addMouseListener(tdl);
+			ThumbLabel tl = new ThumbLabel(orgs.get(i));
 			this.add(tl);
 		}
 	}
@@ -97,49 +110,70 @@ public class ThumbsPanel extends JPanel
 	    return thumbImage;
 	}
 	
-	private class ThumbLabel extends JLabel
+	private class ThumbLabel extends JLabel implements MouseListener, ActionListener
 	{
-		private Organism o;
+		private Organism _organism;
+		private JPopupMenu _menuPopup;
 		
-		public ThumbLabel(Organism o)
+		public ThumbLabel(Organism org)
 		{
-			super(new ImageIcon(makeThumb(o.getComposition().getImage(), THUMB_W, THUMB_H)));
+			super(new ImageIcon(makeThumb(org.getComposition().getImage(), THUMB_W, THUMB_H)));
+			setBorder(BorderFactory.createLineBorder(Color.BLUE));
+			_organism = org;
+			addMouseListener(this);
 			
-			this.o = o;
-			setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-			o.setFitness(0);
+			_menuPopup = new JPopupMenu();
+			JMenuItem menuItem = new JMenuItem("Accept");
+			menuItem.addActionListener(this);
+			_menuPopup.add(menuItem);
+			menuItem = new JMenuItem("Reject");
+			menuItem.addActionListener(this);
+			_menuPopup.add(menuItem);
 		}
 		
 		public Organism getOrganism()
 		{
-			return o;
+			return _organism;
 		}
-		
-	}
-	
-	private class ThumbDragListener implements MouseListener
-	{
-		public void mouseClicked(MouseEvent e) {
+		public void mouseClicked(MouseEvent e)
+		{
 			Organism o = ((ThumbLabel) e.getSource()).getOrganism();
-			if (o.getFitness() == 1.0)
-			{
-				((ThumbLabel) e.getSource()).setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-				o.setFitness(0);
-			}
-			else
-			{
-				((ThumbLabel) e.getSource()).setBorder(BorderFactory.createLineBorder(Color.GREEN));
-				o.setFitness(1.0);
-			}
 			largeDisplay.removeAll();
 			largeDisplay.add(new JLabel(new ImageIcon(o.getComposition().getImage())));
 			largeDisplay.repaint();
-			largeDisplay.revalidate();
+			largeDisplay.revalidate();	
 		}
-		public void mouseEntered(MouseEvent e) { }
-		public void mouseExited(MouseEvent e) {	}
-		public void mousePressed(MouseEvent e) { }		
-		public void mouseReleased(MouseEvent e) { }
+		public void mouseEntered(MouseEvent e) {}
+		public void mouseExited(MouseEvent e) {}
+		public void mousePressed(MouseEvent e)
+		{
+			maybeShowPopup(e);
+		}
+		public void mouseReleased(MouseEvent e)
+		{
+			maybeShowPopup(e);
+		}
+		public void actionPerformed(ActionEvent e)
+		{
+			JMenuItem itemClicked = (JMenuItem)e.getSource();
+			if (itemClicked.getText().equals("Accept"))
+			{
+				_organism.setFitness(1.0);
+				this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+			}
+			else
+			{
+				_organism.setFitness(0.0);
+				this.setBorder(BorderFactory.createLineBorder(Color.RED));
+			}
+		}
+		
+		private void maybeShowPopup(MouseEvent e)
+		{
+			if (e.isPopupTrigger())
+			{
+				_menuPopup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
 	}
-
 }
