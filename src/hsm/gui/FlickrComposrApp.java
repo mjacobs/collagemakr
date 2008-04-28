@@ -53,17 +53,8 @@ public class FlickrComposrApp
 
 	public void nextState()
 	{
-		System.out.println("PRINTING ORDER OF GENERATION:");
 		if (thumbsPanel != null)
 		{
-			LinkedList<Organism> orgs = thumbsPanel.getOrganismsList();
-			for (int i = 0; i < orgs.size(); i++)
-			{
-				Organism o = orgs.get(i);
-				o.printGenome();
-				o.setFitness(1 - ((i+1) / orgs.size()));
-			}
-			
 			_currentPopulation = _currentPopulation.nextGeneration();
 			
 			jContentPane = null;
