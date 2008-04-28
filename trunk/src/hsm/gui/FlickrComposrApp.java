@@ -98,7 +98,7 @@ public class FlickrComposrApp
 		if (jContentPane == null)
 		{
 			makrTitle = new JLabel();
-			makrTitle.setText("chnge ordr plz!!!11");
+			makrTitle.setText("select favritz now, kthxbye!!1");
 			makrTitle.setFont(new Font("Impact", 0, 40));
 			makrTitle.setPreferredSize(new Dimension(232, 80));
 			makrTitle.setHorizontalAlignment(SwingConstants.CENTER);
@@ -138,6 +138,7 @@ public class FlickrComposrApp
 			genMenu = new JMenu();
 			genMenu.setText("Operations");
 			genMenu.add(getNextGenItem());
+			genMenu.add(getRestartItem());
 		}
 		return genMenu;
 	}
@@ -150,9 +151,9 @@ public class FlickrComposrApp
 			genMenuItem.setText("Next Generation");
 			genMenuItem.addActionListener(new ActionListener()
 			{
-
 				public void actionPerformed(ActionEvent e)
 				{
+					
 					nextState();
 				}
 			});
@@ -169,10 +170,13 @@ public class FlickrComposrApp
 			restartItem.setText("Restart");
 			restartItem.addActionListener(new ActionListener()
 			{
-
 				public void actionPerformed(ActionEvent e)
 				{
-					nextState();
+					_currentPopulation = Population.randomPopulation(NUM_IMS);
+					jContentPane = null;
+					jFrame.setContentPane(getJContentPane());
+					jFrame.repaint();
+					jContentPane.revalidate();
 				}
 			});
 		}
