@@ -88,23 +88,34 @@ public class Population
 			startIdx++;
 		}
 		
+		int tot = 0;
+		int num = 0;
+		
 		for (int i=startIdx; i<newOrgs.length; i++)
 		{
-			
+			System.out.println("Making organism " + i);
 			newOrgs[i] = randomFitOrganism(maxFit).mutatedCopy().matedCopy(randomFitOrganism(maxFit).mutatedCopy());
+		
+			tot += newOrgs[i].getComposition().getRoot().countDescendantsAndSelf();
+			num++;
 		}
+		
+		System.out.println("Average size: " + tot/num);
 		
 		return new Population(newOrgs, _generation+1);
 	}
 	
 	public static void main(String[] vargs)
 	{
-		Population p = randomPopulation(16);
+		Population p = randomPopulation(4);
 		System.out.println("Creation done, trying to advance generation...");
 		for (Organism o : p.getOrganisms())
 			o.setFitness(1.0);
 		
-		p.nextGeneration();
+		for (int i=0; i<10; i++)
+		{
+			p = p.nextGeneration();
+		}
 		System.out.println("Done.");
 		
 	}

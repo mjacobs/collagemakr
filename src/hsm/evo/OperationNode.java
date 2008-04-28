@@ -17,6 +17,11 @@ public class OperationNode extends ExpressionNode {
 	{
 		_operation = op;
 		_children = expressionNodes;
+		
+		for (ExpressionNode e : _children)
+		{
+			assert(e != null);
+		}
 	}
 	
 	@Override
@@ -197,6 +202,7 @@ public class OperationNode extends ExpressionNode {
 		{
 			MutationType mutation = ExpressionNode.randomMutationType(true);
 			
+			
 			switch (mutation)
 			{
 				case JITTER:
@@ -241,6 +247,7 @@ public class OperationNode extends ExpressionNode {
 					return TreeGenerator.randomOperationNode(TreeGenerator.getNewTreeDepth(), this);
 					
 				default:
+					assert(false);
 					return null;
 			}
 		}
@@ -307,11 +314,15 @@ public class OperationNode extends ExpressionNode {
 			ParametrizedOperation newOp = Math.random()>0.5 ? opNode.getOperation() : this.getOperation();
 			
 			ExpressionNode[] newChildren = new ExpressionNode[newOp.getNumberOfInputs()];
-			
+			ExpressionNode[] otherChildren = opNode.getChildren();
 			// for each child, mate
 			for (int i=0; i<newOp.getNumberOfInputs(); i++)
 			{
-				newChildren[i] = _children[i].createMated(opNode.getChildren()[i]);
+				newChildren[i] = _children[i].createMated(otherChildren[i]);
+				
+				assert(newChildren[i] != null);
+				assert(_children[i] != null);
+				assert(otherChildren[i] != null);
 			}
 			
 			return new OperationNode(newOp, newChildren);
@@ -393,7 +404,7 @@ public class OperationNode extends ExpressionNode {
 			{
 				cdfi += counts[i];
 				
-				if (randSelect < cdfi)
+				if (randSelect <= cdfi)
 				{
 					return _children[i];
 				}

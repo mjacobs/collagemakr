@@ -43,6 +43,7 @@ public class ElementNode extends ExpressionNode {
 					return TreeGenerator.randomOperationNode(1, this);
 					
 				default:
+					assert(false);
 					return null;
 			}
 		}
