@@ -28,12 +28,12 @@ public abstract class ExpressionNode {
 	public final static String MUTATION_PROB = "mutation_prob";
 	public final static String CROSSOVER = "crossover";
 	
-	public final static String PROB_REPLACE = "prob_replace";
-	public final static String PROB_JITTER = "prob_jitter";
-	public final static String PROB_OP_SWAP = "prob_op_swap";
-	public final static String PROB_OP_WRAP = "prob_op_wrap";
-	public final static String PROB_UNWRAP = "prob_unwrap";
-	public final static String PROB_COPY_SIBLING = "prob_copy_sibling";
+	public final static String PROB_REPLACE = "prob_mutation_replace";
+	public final static String PROB_JITTER = "prob_mutation_jitter";
+	public final static String PROB_OP_SWAP = "prob_mutation_op_swap";
+	public final static String PROB_OP_WRAP = "prob_mutation_op_wrap";
+	public final static String PROB_UNWRAP = "prob_mutation_unwrap";
+	public final static String PROB_COPY_SIBLING = "prob_mutation_copy_sibling";
 	
 	public static double getBaseMutationProbability()
 	{
