@@ -1,33 +1,30 @@
 package hsm.gui;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 import hsm.evo.Organism;
 import hsm.evo.Population;
+import hsm.tools.ImageUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.border.LineBorder;
 
 public class ThumbsPanel extends JPanel
 {
@@ -105,10 +102,13 @@ public class ThumbsPanel extends JPanel
 	{
 		private Organism _organism;
 		private JPopupMenu _menuPopup;
+		private JFileChooser _fc;
 		
 		private static final String GREAT_TEXT = "WANT!!!";
 		private static final String GOOD_TEXT = "meh";
 		private static final String BAD_TEXT = "do not want.";
+		private static final String SAVE_COMPOSITION = "save 4 laturz!";
+		private String SAVE_DIR = System.getProperty("user.home") + System.getProperty("path.seperator");
 		
 		public ThumbLabel(Organism org)
 		{
@@ -132,6 +132,12 @@ public class ThumbsPanel extends JPanel
 			menuItem = new JMenuItem(BAD_TEXT);
 			menuItem.addActionListener(this);
 			_menuPopup.add(menuItem);
+			
+			menuItem = new JMenuItem(SAVE_COMPOSITION);
+			menuItem.addActionListener(this);
+			_menuPopup.add(menuItem);
+			
+			_fc = new JFileChooser();
 		}
 		
 		public Organism getOrganism()
@@ -169,10 +175,31 @@ public class ThumbsPanel extends JPanel
 				_organism.setFitness(2.0);
 				this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 			}
-			else
+			else if (itemClicked.getText().equals(BAD_TEXT))
 			{
 				_organism.setFitness(0.0);
 				this.setBorder(BorderFactory.createLineBorder(Color.RED));
+			}
+			else if (itemClicked.getText().equals(SAVE_COMPOSITION))
+			{
+				File f = null;
+				int returnVal = _fc.showSaveDialog(ThumbsPanel.this);
+		        if (returnVal == JFileChooser.APPROVE_OPTION) {
+		            f = _fc.getSelectedFile();
+		        } else {
+		            f = new File(System.getProperty("user.home") + 
+		            		System.getProperty("path.seperator") + 
+		            		_organism.toString() + ".jpg");
+		        }
+
+				try
+				{					
+					ImageUtils.writeImage(_organism.getComposition().getImage(), f);
+				} catch (IOException e1)
+				{
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		}
 		
