@@ -159,6 +159,7 @@ public abstract class ExpressionNode {
 	
 	public abstract int countDescendantsAndSelf();
 	public abstract int countLeaves();
+	public abstract int treeDepth();
 	
 	public abstract void print(String prefix);
 	public void print() { print(""); }

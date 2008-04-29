@@ -29,14 +29,14 @@ public class Organism
 
 	public Organism mutatedCopy()
 	{
-		return new Organism(new Composition(_composition.getRoot()
-				.createMutated()));
+		return new Organism(new Composition(_composition.getRoot().createMutated(), 
+							EvolutionUtil.mutateColor(_composition.getBackgroundColor())));
 	}
 
 	public Organism matedCopy(Organism ladyFriend)
 	{
-		return new Organism(new Composition(_composition.getRoot().createMated(
-				ladyFriend.getComposition().getRoot())));
+		return new Organism(new Composition(_composition.getRoot().createMated(ladyFriend.getComposition().getRoot()),
+							EvolutionUtil.mateColors(_composition.getBackgroundColor(), ladyFriend.getComposition().getBackgroundColor())));
 	}
 
 	public static Organism randomOrganism()

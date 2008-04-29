@@ -51,16 +51,7 @@ public class ThumbsPanel extends JPanel
 	}
 
 	private void addOrganisms()
-	{
-		JMenuItem menuItem;
-		JPopupMenu popup = new JPopupMenu();
-		menuItem = new JMenuItem("Accept");
-		//menuItem.addActionListener();
-		popup.add(menuItem);
-		menuItem = new JMenuItem("Reject");
-		//menuItem.addActionListener();
-		popup.add(menuItem);
-		
+	{		
 		for (int i = 0; i < orgs.size(); i++)
 		{
 			ThumbLabel tl = new ThumbLabel(orgs.get(i));
@@ -115,18 +106,30 @@ public class ThumbsPanel extends JPanel
 		private Organism _organism;
 		private JPopupMenu _menuPopup;
 		
+		private static final String GREAT_TEXT = "WANT!!!";
+		private static final String GOOD_TEXT = "meh";
+		private static final String BAD_TEXT = "do not want.";
+		
 		public ThumbLabel(Organism org)
 		{
 			super(new ImageIcon(makeThumb(org.getComposition().getImage(), THUMB_W, THUMB_H)));
-			setBorder(BorderFactory.createLineBorder(Color.BLUE));
+			setBorder(BorderFactory.createLineBorder(Color.RED));
 			_organism = org;
+			_organism.setFitness(0.0);
+			
 			addMouseListener(this);
 			
 			_menuPopup = new JPopupMenu();
-			JMenuItem menuItem = new JMenuItem("Accept");
+			
+			JMenuItem menuItem = new JMenuItem(GREAT_TEXT);
 			menuItem.addActionListener(this);
 			_menuPopup.add(menuItem);
-			menuItem = new JMenuItem("Reject");
+			
+			menuItem = new JMenuItem(GOOD_TEXT);
+			menuItem.addActionListener(this);
+			_menuPopup.add(menuItem);
+			
+			menuItem = new JMenuItem(BAD_TEXT);
 			menuItem.addActionListener(this);
 			_menuPopup.add(menuItem);
 		}
@@ -156,9 +159,14 @@ public class ThumbsPanel extends JPanel
 		public void actionPerformed(ActionEvent e)
 		{
 			JMenuItem itemClicked = (JMenuItem)e.getSource();
-			if (itemClicked.getText().equals("Accept"))
+			if (itemClicked.getText().equals(GOOD_TEXT))
 			{
 				_organism.setFitness(1.0);
+				this.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+			}
+			else if (itemClicked.getText().equals(GREAT_TEXT))
+			{
+				_organism.setFitness(2.0);
 				this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 			}
 			else
