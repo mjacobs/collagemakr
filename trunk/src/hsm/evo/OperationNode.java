@@ -47,30 +47,12 @@ public class OperationNode extends ExpressionNode {
 		return _children;
 	}
 	
-	private static double wrapValue(double x, double min, double max)
-	{
-		assert(max > min);
-		
-		double interval = max - min;
-		
-		while (x > max || x < min)
-		{
-			if (x > max)
-			{
-				x -= interval;
-			}
-			else if (x < min)
-			{
-				x += interval;
-			}			
-		}
-		
-		return x;
-	}
 	
-	private static ExpressionNode[] adaptChildren(ExpressionNode[] origChildren, ParametrizedOperation dstOp)
+	
+	private static ExpressionNode[] adaptChildren(OperationNode origParent, ParametrizedOperation dstOp)
 	{
 		ExpressionNode[] result = new ExpressionNode[dstOp.getNumberOfInputs()];
+		ExpressionNode[] origChildren = origParent.getChildren();
 		
 		if (origChildren.length > dstOp.getNumberOfInputs())
 		{
@@ -88,7 +70,7 @@ public class OperationNode extends ExpressionNode {
 			
 			for (int i=origChildren.length; i<dstOp.getNumberOfInputs(); i++)
 			{
-				result[i] = TreeGenerator.randomNode(TreeGenerator.getNewTreeDepth());
+				result[i] = TreeGenerator.randomNode(origParent.treeDepth()-1);
 			}
 		}
 		
@@ -107,7 +89,7 @@ public class OperationNode extends ExpressionNode {
 		{
 			if (pOrig.containsKey(currProp))
 			{
-				pOut.put(currProp, wrapValue(pOrig.get(currProp), 
+				pOut.put(currProp, EvolutionUtil.wrapValue(pOrig.get(currProp), 
 							dstInfo.getMinimum(currProp), dstInfo.getMaximum(currProp)));
 				
 				pOrigCpy.remove(currProp);
@@ -140,7 +122,7 @@ public class OperationNode extends ExpressionNode {
 			}
 			else
 			{
-				currVal = wrapValue(unmatchedValues.pop(), dstInfo.getMinimum(prop), dstInfo.getMaximum(prop));
+				currVal = EvolutionUtil.wrapValue(unmatchedValues.pop(), dstInfo.getMinimum(prop), dstInfo.getMaximum(prop));
 			}
 				
 			
@@ -162,7 +144,7 @@ public class OperationNode extends ExpressionNode {
 		
 		for (String prop : rangeInfo.getPropertyNames())
 		{
-			newProp.put(prop, wrapValue(propIn.get(prop) + randomOffset(rangeInfo.getMinimum(prop), rangeInfo.getMaximum(prop)), 
+			newProp.put(prop, EvolutionUtil.wrapValue(propIn.get(prop) + randomOffset(rangeInfo.getMinimum(prop), rangeInfo.getMaximum(prop)), 
 										rangeInfo.getMinimum(prop), rangeInfo.getMaximum(prop)));
 		}
 		
@@ -229,7 +211,7 @@ public class OperationNode extends ExpressionNode {
 					ParametrizedOperation newOp = TreeGenerator.randomUninitializedOperation();
 					newOp.initWithParameters(adaptProperties(_operation.getParameters(), newOp.getPropertyData()));;
 					
-					return new OperationNode(newOp, mutateChildren(adaptChildren(_children, newOp)));	
+					return new OperationNode(newOp, mutateChildren(adaptChildren(this, newOp)));	
 				}
 				case UNWRAP:
 					// replace self with child
@@ -241,10 +223,10 @@ public class OperationNode extends ExpressionNode {
 																			  (int)Math.random()*_children.length)));
 					
 				case REPLACE:
-					return TreeGenerator.randomNode(TreeGenerator.getNewTreeDepth());
+					return TreeGenerator.randomNode(this.treeDepth());
 					
 				case OP_WRAP:
-					return TreeGenerator.randomOperationNode(TreeGenerator.getNewTreeDepth(), this);
+					return TreeGenerator.randomOperationNode(this.treeDepth(), this);
 					
 				default:
 					assert(false);
@@ -436,4 +418,20 @@ public class OperationNode extends ExpressionNode {
 		}
 	}
 	
+	public int treeDepth()
+	{
+		int maxDepth = 0;
+		int currDepth;
+		for (int i=0; i<_children.length; i++)
+		{
+			currDepth = _children[i].treeDepth();
+			
+			if (currDepth > maxDepth)
+			{
+				maxDepth = currDepth;
+			}
+		}
+		
+		return maxDepth+1;
+	}
 }

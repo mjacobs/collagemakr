@@ -9,16 +9,23 @@ import java.awt.image.BufferedImage;
 public class Composition {
 	private ExpressionNode _root;
 	private BufferedImage _cachedImage;
+	private Color _bgColor;
 	
-	public Composition(ExpressionNode root)
+	public Composition(ExpressionNode root, Color bgColor)
 	{
 		_root = root;
 		_cachedImage = null;
+		_bgColor = bgColor;
 	}
 	
 	public ExpressionNode getRoot()
 	{
 		return _root;
+	}
+	
+	public Color getBackgroundColor()
+	{
+		return _bgColor;
 	}
 	
 	public BufferedImage getImage()
@@ -34,7 +41,7 @@ public class Composition {
 			
 			Graphics2D g2d = _cachedImage.createGraphics();
 			
-			g2d.setBackground(new Color(159,180,204));
+			g2d.setBackground(_bgColor);
 			g2d.clearRect(0, 0, canvasWidth, canvasHeight);
 			g2d.drawImage(img, 0, 0, null);
 			
@@ -51,7 +58,12 @@ public class Composition {
 	
 	public static Composition randomComposition()
 	{
-		return new Composition(TreeGenerator.randomNode(TreeGenerator.getNewTreeDepth()));
+		float hsv[] = new float[3];
+		
+		for (int i=0; i<3; i++) hsv[i] = (float) Math.random();
+		
+		return new Composition(TreeGenerator.randomNode(TreeGenerator.getNewTreeDepth()),
+				Color.getHSBColor(hsv[0], hsv[1], hsv[2]));
 	}
 	
 }

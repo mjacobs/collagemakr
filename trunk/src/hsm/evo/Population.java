@@ -1,6 +1,7 @@
 package hsm.evo;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Population
 {
@@ -47,20 +48,29 @@ public class Population
 	public Organism getFittest()
 	{
 		double maxFit = Double.NEGATIVE_INFINITY;
-		Organism maxOrg = null;
+		Vector<Organism> maxOrgs = new Vector<Organism>();
 		
 		for (Organism o : _orgs)
 		{
 			assert(o.getFitness() >= 0.0);
 			
-			if (o.getFitness() > maxFit)
+			if (o.getFitness() >= maxFit)
 			{
 				maxFit = o.getFitness();
-				maxOrg = o;
+				
+				if (o.getFitness() == maxFit)
+				{
+					maxOrgs.add(o);
+				}
+				else
+				{
+					maxOrgs.clear();
+				}
 			}
+			
 		}
 		
-		return maxOrg;
+		return maxOrgs.get((int)(Math.random()*maxOrgs.size()));
 	}
 
 	protected Organism randomFitOrganism(double maxFit)
@@ -70,7 +80,7 @@ public class Population
 		do
 		{
 			currOrg = _orgs[(int)(Math.random()*_orgs.length)];
-		} while (Math.random()*maxFit > currOrg.getFitness());
+		} while (Math.random()*maxFit >= currOrg.getFitness());
 		
 		return currOrg;
 	}
@@ -82,27 +92,31 @@ public class Population
 		double maxFit = fittest.getFitness();
 		int startIdx = 0;
 		
-		if (g_elitism)
+		if (maxFit == 0.0) return randomPopulation(_orgs.length);
+		else
 		{
-			newOrgs[0] = fittest.unrankedCopy();
-			startIdx++;
+			if (g_elitism)
+			{
+				newOrgs[0] = fittest.unrankedCopy();
+				startIdx++;
+			}
+						
+			int tot = 0;
+			int num = 0;
+			
+			for (int i=startIdx; i<newOrgs.length; i++)
+			{
+				System.out.println("Making organism " + i);
+				newOrgs[i] = randomFitOrganism(maxFit).mutatedCopy().matedCopy(randomFitOrganism(maxFit).mutatedCopy());
+			
+				tot += newOrgs[i].getComposition().getRoot().treeDepth();
+				num++;
+			}
+			
+			System.out.println("Average depth: " + tot/num);
+			
+			return new Population(newOrgs, _generation+1);
 		}
-		
-		int tot = 0;
-		int num = 0;
-		
-		for (int i=startIdx; i<newOrgs.length; i++)
-		{
-			System.out.println("Making organism " + i);
-			newOrgs[i] = randomFitOrganism(maxFit).mutatedCopy().matedCopy(randomFitOrganism(maxFit).mutatedCopy());
-		
-			tot += newOrgs[i].getComposition().getRoot().countDescendantsAndSelf();
-			num++;
-		}
-		
-		System.out.println("Average size: " + tot/num);
-		
-		return new Population(newOrgs, _generation+1);
 	}
 	
 	public static void main(String[] vargs)

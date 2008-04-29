@@ -19,6 +19,7 @@ public class TreeGenerator {
 
 	public final static String OFFLINE = "offline";
 	public final static String OFFLINE_DIR = "offline_dir";
+	public final static String SHOULD_EXTRACT = "extract";
 	public final static String CANVAS_WIDTH = "canvas_width";
 	public final static String CANVAS_HEIGHT = "canvas_height";
 	public final static String NEW_TREE_HEIGHT = "new_tree_height";
@@ -32,13 +33,14 @@ public class TreeGenerator {
 	{
 		Config.getConfig().registerBoolean(OFFLINE, false);
 		Config.getConfig().registerString(OFFLINE_DIR, ".");
+		Config.getConfig().registerBoolean(SHOULD_EXTRACT, true);
 		Config.getConfig().registerInt(CANVAS_WIDTH, 250);
 		Config.getConfig().registerInt(CANVAS_HEIGHT, 250);
 		Config.getConfig().registerInt(NEW_TREE_HEIGHT, 5);
 		
 	}
 	
-	private static class GenerationContext
+	public static class GenerationContext
 	{
 		private static GenerationContext _ctx = null;
 		private IExtractor[] _extractors = { new LuminanceExtractor(), new SimpleExtractor() };
@@ -211,7 +213,14 @@ public class TreeGenerator {
 		while (extractedImage == null)
 		{
 			randImage = GenerationContext.getContext().getSource().getRandomImage();
-			extractedImage = GenerationContext.getContext().randomExtractor().getExtract(randImage.getImage());
+			if (Config.getConfig().getBoolean(SHOULD_EXTRACT))
+			{
+				extractedImage = GenerationContext.getContext().randomExtractor().getExtract(randImage.getImage());
+			}
+			else
+			{
+				extractedImage = randImage.getImage();
+			}
 		}
 		
 		System.out.println("done.");

@@ -116,4 +116,9 @@ public class ElementNode extends ExpressionNode {
 		}
 	}
 	
+	public int treeDepth()
+	{
+		return 0;
+	}
+	
 }
