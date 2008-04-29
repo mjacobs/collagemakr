@@ -21,10 +21,15 @@ import hsm.tools.ImageUtils;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 
 public class ThumbsPanel extends JPanel
 {
@@ -109,6 +114,7 @@ public class ThumbsPanel extends JPanel
 		private static final String BAD_TEXT = "do not want.";
 		private static final String SAVE_COMPOSITION = "save 4 laturz!";
 		private String SAVE_DIR = System.getProperty("user.home") + System.getProperty("path.seperator");
+		private static final String VIEW_TREE = "i can has tree?";
 		
 		public ThumbLabel(Organism org)
 		{
@@ -133,7 +139,13 @@ public class ThumbsPanel extends JPanel
 			menuItem.addActionListener(this);
 			_menuPopup.add(menuItem);
 			
+			_menuPopup.addSeparator();
+			
 			menuItem = new JMenuItem(SAVE_COMPOSITION);
+			menuItem.addActionListener(this);
+			_menuPopup.add(menuItem);
+
+			menuItem = new JMenuItem(VIEW_TREE);
 			menuItem.addActionListener(this);
 			_menuPopup.add(menuItem);
 			
@@ -201,6 +213,14 @@ public class ThumbsPanel extends JPanel
 					e1.printStackTrace();
 				}
 			}
+			else if (itemClicked.getText().equals(VIEW_TREE))
+			{
+				JFrame treeFrame = new JFrame();
+				JTree treePane = new JTree(_organism.getComposition().getRoot().generateJTreeNode());
+				treeFrame.setContentPane(new JScrollPane(treePane));
+				treeFrame.setSize(300, 400);
+				treeFrame.setVisible(true);
+			}
 		}
 		
 		private void maybeShowPopup(MouseEvent e)
@@ -210,5 +230,6 @@ public class ThumbsPanel extends JPanel
 				_menuPopup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
+
 	}
 }

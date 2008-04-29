@@ -2,6 +2,8 @@ package hsm.evo;
 
 import java.util.HashMap;
 
+import javax.swing.tree.MutableTreeNode;
+
 import hsm.global.Config;
 import hsm.image.LayerImage;
 
@@ -187,4 +189,8 @@ public abstract class ExpressionNode {
 		
 		System.out.println(freqs);
 	}
+	
+	// GUI stuff
+	// this is an indication that I really should have used the visitor pattern
+	public abstract MutableTreeNode generateJTreeNode();
 }

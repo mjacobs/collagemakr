@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
 
 /**
  * @author bjmoore
@@ -48,17 +50,25 @@ public class CompositionTestApp {
 	
 	public CompositionTestApp() throws ImageException
 	{
+		Composition comp = Composition.randomComposition();
+		
 		JFrame frame = new JFrame();
+		JFrame treeFrame = new JFrame();
+		
 		CompositionFrame compFrame = new CompositionFrame();
 		frame.setContentPane(compFrame);
+		
+		JTree compTree = new JTree(comp.getRoot().generateJTreeNode());
+		treeFrame.setContentPane(new JScrollPane(compTree));
 		
 		frame.setSize(640, 480);
 		frame.setVisible(true);
 
 		System.out.println("initializing...");
 		frame.setVisible(true);
+		treeFrame.setVisible(true);
 		
-		compFrame.setComposition(Composition.randomComposition());
+		compFrame.setComposition(comp);
 		System.out.println("Complete");
 	}
 	

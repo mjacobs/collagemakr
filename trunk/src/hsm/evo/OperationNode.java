@@ -3,6 +3,9 @@ package hsm.evo;
 import java.util.HashMap;
 import java.util.Stack;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+
 import hsm.evo.ParametrizedOperation;
 import hsm.evo.OperationMetadata.PropertyData;
 import hsm.image.LayerImage;
@@ -433,5 +436,16 @@ public class OperationNode extends ExpressionNode {
 		}
 		
 		return maxDepth+1;
+	}
+
+	@Override
+	public MutableTreeNode generateJTreeNode() {
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(_operation);
+		for (int i=0; i<_children.length; i++)
+		{
+			node.add(_children[i].generateJTreeNode());
+		}
+		
+		return node;
 	}
 }

@@ -7,6 +7,9 @@ import hsm.image.LayerImage;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+
 public class ElementNode extends ExpressionNode {
 
 	private DeferredImage _image;
@@ -120,5 +123,10 @@ public class ElementNode extends ExpressionNode {
 	{
 		return 0;
 	}
-	
+
+	@Override
+	public MutableTreeNode generateJTreeNode() {
+		return new DefaultMutableTreeNode(_source.getTitle());
+	}
+
 }

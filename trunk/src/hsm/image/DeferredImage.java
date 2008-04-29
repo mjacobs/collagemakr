@@ -17,7 +17,6 @@ public class DeferredImage {
 	static
 	{
 		Config.getConfig().registerBoolean("defer_images", true);
-		
 		g_tempDir = new File("temp/img/");
 		
 		if (! g_tempDir.exists())
