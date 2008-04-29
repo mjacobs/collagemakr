@@ -10,7 +10,7 @@ import hsm.image.FlickrSource;
 
 public class MakeLocalFlickr {
 
-	public static final boolean extract = false;
+	public static final boolean extract = true;
 	
 	/**
 	 * @param args

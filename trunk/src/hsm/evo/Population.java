@@ -5,7 +5,7 @@ import java.util.Vector;
 
 public class Population
 {
-	private final boolean g_elitism = true;
+	private int _eliteCount;
 	protected int _generation;
 
 	protected Organism[] _orgs;
@@ -14,6 +14,7 @@ public class Population
 	{
 		_orgs = orgs;
 		_generation = generation;
+		_eliteCount = orgs.length/2;
 	}
 	
 	public int getSize()
@@ -45,7 +46,7 @@ public class Population
 		return new Population(arrayList.toArray(orgs), 1);
 	}
 	
-	public Organism getFittest()
+	public Vector<Organism> getAllFittest()
 	{
 		double maxFit = Double.NEGATIVE_INFINITY;
 		Vector<Organism> maxOrgs = new Vector<Organism>();
@@ -54,22 +55,29 @@ public class Population
 		{
 			assert(o.getFitness() >= 0.0);
 			
-			if (o.getFitness() >= maxFit)
+			System.out.println("curr = " + o.getFitness() + ", max="+maxFit + " numMax: " + maxOrgs.size());
+			
+			if (o.getFitness() > maxFit)
 			{
+				System.out.println("clearing");
 				maxFit = o.getFitness();
-				
-				if (o.getFitness() == maxFit)
-				{
-					maxOrgs.add(o);
-				}
-				else
-				{
-					maxOrgs.clear();
-				}
+				maxOrgs.clear();
+				maxOrgs.add(o);
+			}
+			else if (o.getFitness() == maxFit)
+			{
+				System.out.println("adding");
+				maxOrgs.add(o);
 			}
 			
 		}
 		
+		return maxOrgs;
+	}
+	
+	public Organism getFittest()
+	{
+		Vector<Organism> maxOrgs = getAllFittest();
 		return maxOrgs.get((int)(Math.random()*maxOrgs.size()));
 	}
 
@@ -87,24 +95,31 @@ public class Population
 	
 	public Population nextGeneration()
 	{
-		Organism fittest = getFittest();
 		Organism[] newOrgs = new Organism[_orgs.length];
-		double maxFit = fittest.getFitness();
-		int startIdx = 0;
+		
+		Vector<Organism> elites = getAllFittest();
+		System.out.println("numelites: " + elites.size());
+		
+		double maxFit = elites.get(0).getFitness();
 		
 		if (maxFit == 0.0) return randomPopulation(_orgs.length);
 		else
 		{
-			if (g_elitism)
+			int keepElites = Math.min(_eliteCount, elites.size());
+			
+			for (int i=0; i<keepElites; i++)
 			{
-				newOrgs[0] = fittest.unrankedCopy();
-				startIdx++;
+				int randIdx = (int)(Math.random()*elites.size());
+				
+				newOrgs[i] = elites.get(randIdx).unrankedCopy();
+				
+				elites.remove(randIdx);
 			}
-						
+			
 			int tot = 0;
 			int num = 0;
 			
-			for (int i=startIdx; i<newOrgs.length; i++)
+			for (int i=keepElites; i<newOrgs.length; i++)
 			{
 				System.out.println("Making organism " + i);
 				newOrgs[i] = randomFitOrganism(maxFit).mutatedCopy().matedCopy(randomFitOrganism(maxFit).mutatedCopy());
@@ -123,11 +138,13 @@ public class Population
 	{
 		Population p = randomPopulation(4);
 		System.out.println("Creation done, trying to advance generation...");
-		for (Organism o : p.getOrganisms())
-			o.setFitness(1.0);
+
 		
-		for (int i=0; i<10; i++)
+		for (int i=0; i<100; i++)
 		{
+			for (Organism o : p.getOrganisms())
+				o.setFitness(1.0);
+			
 			p = p.nextGeneration();
 		}
 		System.out.println("Done.");

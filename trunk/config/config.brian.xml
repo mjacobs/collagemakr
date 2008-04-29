@@ -2,7 +2,8 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <entry key="offline">true</entry>
-<entry key="extract">true</entry>
+<entry key="extract">false</entry>
+<entry key="defer_images">false</entry>
 <entry key="facebook_api_secret">2defc0317e9c7ae639e14c6e91bd5a07</entry>
 <entry key="canvas_height">480</entry>
 <entry key="canvas_width">640</entry>

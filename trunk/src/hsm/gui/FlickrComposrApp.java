@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 public class FlickrComposrApp
 {
 
-	protected static final int NUM_IMS = 8;
+	protected static final int NUM_IMS = 10;
 	protected static final int NUM_CHOICES = 3;
 
 	protected Population _currentPopulation;

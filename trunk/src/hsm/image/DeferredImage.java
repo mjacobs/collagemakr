@@ -1,5 +1,7 @@
 package hsm.image;
 
+import hsm.global.Config;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,11 +10,14 @@ import javax.imageio.ImageIO;
 
 public class DeferredImage {
 	
-	protected File _file;
+	protected File _file = null;
 	protected static final File g_tempDir;
+	protected BufferedImage _image = null;
 	
 	static
 	{
+		Config.getConfig().registerBoolean("defer_images", true);
+		
 		g_tempDir = new File("temp/img/");
 		
 		if (! g_tempDir.exists())
@@ -31,24 +36,31 @@ public class DeferredImage {
 	public DeferredImage(BufferedImage img)
 	{
 		
-		
-		try {
-			_file = File.createTempFile("hsm", ".png", g_tempDir);
-			_file.deleteOnExit(); // just in case...
-			
-			ImageIO.write(img, "png", _file);
-		} catch (IOException e) {
-			e.printStackTrace();
-			_file = null;
+		if (Config.getConfig().getBoolean("defer_images"))
+		{
+			try {
+				_file = File.createTempFile("hsm", ".png", g_tempDir);
+				_file.deleteOnExit(); // just in case...
+				
+				ImageIO.write(img, "png", _file);
+			} catch (IOException e) {
+				e.printStackTrace();
+				_file = null;
+			}
 		}
-		
+		else
+		{
+			_image = img;
+		}
 		
 	}
 	
 	@Override
 	protected void finalize() throws Throwable {
-		_file.delete();
-		
+		if (_file != null)
+		{
+			_file.delete();
+		}
 		super.finalize();
 	}
 
@@ -56,11 +68,19 @@ public class DeferredImage {
 
 	public BufferedImage getImage()
 	{
-		try {
-			return ImageIO.read(_file);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+		if (_image != null)
+		{
+			return _image;
+		}
+		else
+		{
+			assert(_file != null);
+			try {
+				return ImageIO.read(_file);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 	}
 }
