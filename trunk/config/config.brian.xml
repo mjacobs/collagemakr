@@ -32,6 +32,7 @@
 	<entry key="prob_translate">0.0</entry>
 	<entry key="prob_shadow">1.0</entry>
 	<entry key="prob_solarize">1.0</entry>
+	<entry key="prob_posterize">1.0</entry>
 	
 	<entry key="prob_extract_luminance">1.0</entry>
 	<entry key="prob_extract_magicwand">1.0</entry>

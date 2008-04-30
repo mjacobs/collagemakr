@@ -1,6 +1,7 @@
 package hsm.test;
 
 import hsm.evo.LinearMotionBlurOperation;
+import hsm.evo.PosterizeOperation;
 import hsm.evo.RotateOperation;
 import hsm.image.*;
 
@@ -108,17 +109,16 @@ public class OperationTestApp {
 //											new AffineTransformOp(af, _hints));
 			
 			HashMap<String, Double> props = new HashMap<String, Double>();
-			props.put("angle", (double)_ang);
-			props.put("distance", 10.0);
+			props.put("levels", 1.0);
 			
-			ImageOperation op1 = new LinearMotionBlurOperation().initWithParameters(props);
+			ImageOperation op1 = new PosterizeOperation().initWithParameters(props);
 			
-			ImageOperation op2 = new CompositeAdaptor(AlphaComposite.Xor);
+			ImageOperation op2 = new CompositeAdaptor(AlphaComposite.SrcOver);
 			
 			_frame.setImage(op2.perform(op1.perform(_img1), _img2));
 			
-			_ang += 0.01f;
-			//_step++;
+			//_ang += 0.01f;
+			_step++;
 		}
 		
 	}

@@ -83,6 +83,7 @@ public final class OperationMetadata {
 				Class.forName ("hsm.evo.CompositeBrightnessOperation");
 				Class.forName ("hsm.evo.CompositeDodgeOperation");
 				Class.forName ("hsm.evo.CompositeLightenOperation");
+				Class.forName ("hsm.evo.PosterizeOperation");
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
