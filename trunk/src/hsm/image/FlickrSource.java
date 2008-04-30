@@ -36,7 +36,7 @@ public class FlickrSource implements ImageSource {
 	private SearchParameters _query;
 	private Vector<Photo> _photoPool;
 	
-	private final boolean recent = false;
+	private final boolean recent = true;
 	
 	public static final String FLICKR_SIZE = "flickr_size";
 	
