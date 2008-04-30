@@ -1,22 +1,21 @@
 package hsm.tools;
 
-import java.util.List;
-
-import com.aetrion.flickr.tags.Tag;
 
 public class TagChecker
 {
-	public boolean isValidTag(Tag tag)
+	
+	
+	public boolean isValidTag(String tag)
 	{
 		return false;
 	}
 	
-	public List<Tag> getTags()
+	public String[] getTags()
 	{
 		return null;
 	}
 	
-	public List<Tag> getTags(int numTags)
+	public String[] getTags(int numTags)
 	{
 		return null;
 	}
