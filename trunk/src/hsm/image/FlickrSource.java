@@ -36,7 +36,7 @@ public class FlickrSource implements ImageSource {
 	private SearchParameters _query;
 	private Vector<Photo> _photoPool;
 	
-	private final boolean recent = true;
+	private final boolean recent = false;
 	
 	public static final String FLICKR_SIZE = "flickr_size";
 	
@@ -74,10 +74,10 @@ public class FlickrSource implements ImageSource {
 		_query = new SearchParameters();
 		_query.setSafeSearch(Flickr.SAFETYLEVEL_SAFE);
 		//_query.setText("llama");
-		String tgs[] = {"llama"};
+		String tgs[] = {"car"};
 		_query.setTags(tgs);
-		//_query.setLicense("4,5,2,1");
-		//_query.setExtrasLicense(true);
+		_query.setLicense("4,5,2,1");
+		_query.setExtrasLicense(true);
 		_query.setExtrasOwnerName(true);
 		_query.setExtrasTags(true);
 		

@@ -72,7 +72,7 @@ public class ImageTestApp {
 		
 		public void actionPerformed(ActionEvent evt) 
 		{
-    	 	_frame.setImage(_ex.getExtract(_src.getRandomImage().getImage()));
+    	 	_frame.setImage(_src.getRandomImage().getImage());
 		}
 		
 	}

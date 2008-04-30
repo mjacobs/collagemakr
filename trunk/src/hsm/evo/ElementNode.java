@@ -126,7 +126,7 @@ public class ElementNode extends ExpressionNode {
 
 	@Override
 	public MutableTreeNode generateJTreeNode() {
-		return new DefaultMutableTreeNode(_source.getTitle());
+		return new DefaultMutableTreeNode("\"" + _source.getTitle() + "\"" + " by " + _source.getOwner());
 	}
 
 }

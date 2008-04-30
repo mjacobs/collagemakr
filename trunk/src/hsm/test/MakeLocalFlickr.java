@@ -6,6 +6,7 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 import hsm.evo.TreeGenerator;
+import hsm.image.AnnotatedImage;
 import hsm.image.FlickrSource;
 
 public class MakeLocalFlickr {
@@ -34,7 +35,8 @@ public class MakeLocalFlickr {
 		{
 			System.out.println(i);
 			
-			BufferedImage img = source.getRandomImage().getImage();
+			AnnotatedImage sourceImg = source.getRandomImage();
+			BufferedImage img = sourceImg.getImage();
 			
 			if (extract)
 				img = TreeGenerator.GenerationContext.getContext().randomExtractor().getExtract(img);
@@ -42,7 +44,7 @@ public class MakeLocalFlickr {
 			if (img != null)
 			{
 				currFile = File.createTempFile("hsm", ".png", dir);
-				
+				sourceImg.saveToDisk(currFile);
 				ImageIO.write(img, "png", currFile);
 			}
 		}
