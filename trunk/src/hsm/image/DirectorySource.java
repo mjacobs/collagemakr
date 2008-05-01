@@ -11,8 +11,23 @@ public class DirectorySource implements ImageSource {
 		_path = path;
 	}
 	
-	
-	public AnnotatedImage getRandomImage() {
+	public AnnotatedImage getRandomImage(String tag) {
+		
+		if (tag == null || tag.length() == 0) return getRandomImageHelper();
+		else
+		{
+			AnnotatedImage img;
+			int numAttempts = 0;
+			do
+			{
+				img = getRandomImageHelper();
+				numAttempts ++;
+			} while(! img.hasTag(tag) && numAttempts < 0xF );
+			
+			return img;
+		}
+	}
+	private AnnotatedImage getRandomImageHelper() {
 		File dir = new File(_path);
 		File[] dirFiles = dir.listFiles(new ImageTypeFilter());
 		

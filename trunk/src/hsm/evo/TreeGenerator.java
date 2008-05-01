@@ -10,6 +10,7 @@ import hsm.image.ImageSource;
 import hsm.tools.IExtractor;
 import hsm.tools.LuminanceExtractor;
 import hsm.tools.SimpleExtractor;
+import hsm.tools.TagChecker;
 
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -207,12 +208,14 @@ public class TreeGenerator {
 	{
 		AnnotatedImage randImage = null;
 		BufferedImage extractedImage = null;
+		String[] allTags = TagChecker.getInstance().getTags();
+		String randTag = allTags[(int)(Math.random()*allTags.length)];
 		
 		System.out.print("Making leaf... ");
 		
 		while (extractedImage == null)
 		{
-			randImage = GenerationContext.getContext().getSource().getRandomImage();
+			randImage = GenerationContext.getContext().getSource().getRandomImage(randTag);
 			if (Config.getConfig().getBoolean(SHOULD_EXTRACT))
 			{
 				extractedImage = GenerationContext.getContext().randomExtractor().getExtract(randImage.getImage());

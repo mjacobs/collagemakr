@@ -14,7 +14,7 @@ public class ImageDownloadTest {
 	 
 	public void testDoesDownload() throws ImageException
 	{
-		AnnotatedImage img = _source.getRandomImage();
+		AnnotatedImage img = _source.getRandomImage(null);
 		
 		// assert we got a non-null image
 		assertTrue(img != null);

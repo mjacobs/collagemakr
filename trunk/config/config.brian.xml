@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<entry key="offline">true</entry>
-<entry key="extract">false</entry>
-<entry key="defer_images">false</entry>
+<entry key="offline">false</entry>
+<entry key="extract">true</entry>
+<entry key="defer_images">true</entry>
 <entry key="facebook_api_secret">2defc0317e9c7ae639e14c6e91bd5a07</entry>
 <entry key="canvas_height">480</entry>
 <entry key="canvas_width">640</entry>
@@ -11,7 +11,7 @@
 <entry key="flickr_size">medium</entry>
 <entry key="offline_dir">data/features/</entry>
 <entry key="mutation_prob">0.5</entry>
-<entry key="new_tree_height">6</entry>
+<entry key="new_tree_height">0</entry>
 
 	<entry key="prob_blur">1.0</entry>
 	<entry key="prob_compositeover">1.0</entry>

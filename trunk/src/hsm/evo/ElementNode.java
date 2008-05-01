@@ -3,6 +3,7 @@ package hsm.evo;
 import hsm.image.AnnotatedImage;
 import hsm.image.DeferredImage;
 import hsm.image.LayerImage;
+import hsm.tools.TagChecker;
 
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -40,7 +41,30 @@ public class ElementNode extends ExpressionNode {
 			switch (mutation)
 			{
 				case REPLACE:
-					return TreeGenerator.randomNode(0);
+					// replace with related node
+					String tags[] = TagChecker.getInstance().filterTags(_source.getTags());
+					
+					if (tags.length == 0)
+					{
+						return TreeGenerator.randomNode(0);
+					}
+					else
+					{
+						String randTag = tags[(int)(Math.random()*tags.length)];
+						System.out.println("Creating new image related to tag " + randTag);
+						
+						TreeGenerator.GenerationContext gc = TreeGenerator.GenerationContext.getContext();
+						AnnotatedImage img = null;
+						BufferedImage extractedImage = null;
+						
+						while (extractedImage == null)
+						{
+							img = gc.getSource().getRandomImage(randTag);
+							extractedImage = gc.randomExtractor().getExtract(img.getImage());
+						}
+						
+						return new ElementNode(_center, extractedImage, img);
+					}
 					
 				case OP_WRAP:
 					return TreeGenerator.randomOperationNode(1, this);

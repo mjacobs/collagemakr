@@ -8,10 +8,12 @@ import javax.imageio.ImageIO;
 import hsm.evo.TreeGenerator;
 import hsm.image.AnnotatedImage;
 import hsm.image.FlickrSource;
+import hsm.tools.TagChecker;
 
 public class MakeLocalFlickr {
 
 	public static final boolean extract = true;
+	public static final int numPerTag = 10;
 	
 	/**
 	 * @param args
@@ -30,22 +32,28 @@ public class MakeLocalFlickr {
 		if (! dir.exists()) dir.mkdirs();
 		
 		File currFile;
+
+		String[] allTags = TagChecker.getInstance().getTags();
+		int numImages = allTags.length * numPerTag;
 		
-		for (int i=0; i<100; i++)
+		for (int i=0; i<allTags.length; i++)
 		{
-			System.out.println(i);
-			
-			AnnotatedImage sourceImg = source.getRandomImage();
-			BufferedImage img = sourceImg.getImage();
-			
-			if (extract)
-				img = TreeGenerator.GenerationContext.getContext().randomExtractor().getExtract(img);
-			
-			if (img != null)
+			for (int j=0; j<numPerTag; j++)
 			{
-				currFile = File.createTempFile("hsm", ".png", dir);
-				sourceImg.saveToDisk(currFile);
-				ImageIO.write(img, "png", currFile);
+				System.out.println((i*numPerTag + j) + " out of " + numImages);
+				
+				AnnotatedImage sourceImg = source.getRandomImage(allTags[i]);
+				BufferedImage img = sourceImg.getImage();
+				
+				if (extract)
+					img = TreeGenerator.GenerationContext.getContext().randomExtractor().getExtract(img);
+				
+				if (img != null)
+				{
+					currFile = File.createTempFile("hsm", ".png", dir);
+					sourceImg.saveToDisk(currFile);
+					ImageIO.write(img, "png", currFile);
+				}
 			}
 		}
 	}

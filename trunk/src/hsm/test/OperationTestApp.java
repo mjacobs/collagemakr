@@ -93,8 +93,8 @@ public class OperationTestApp {
 			_frame = inFrame;
 			
 			DirectorySource src = new DirectorySource("data/samples");
-			_img1 = new LayerImage(src.getRandomImage().getImage(),new Point2D.Double(100, 100));
-			_img2 = new LayerImage(src.getRandomImage().getImage());
+			_img1 = new LayerImage(src.getRandomImage(null).getImage(),new Point2D.Double(100, 100));
+			_img2 = new LayerImage(src.getRandomImage(null).getImage());
 		
 			_hints = new RenderingHints(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 			_hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);

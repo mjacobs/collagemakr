@@ -72,7 +72,8 @@ public class ImageTestApp {
 		
 		public void actionPerformed(ActionEvent evt) 
 		{
-    	 	_frame.setImage(_src.getRandomImage().getImage());
+
+    	 	_frame.setImage(_src.getRandomImage("apple").getImage());
 		}
 		
 	}

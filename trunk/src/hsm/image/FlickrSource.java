@@ -5,6 +5,7 @@ import hsm.global.Config;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Vector;
 
@@ -33,16 +34,28 @@ public class FlickrSource implements ImageSource {
 
 	private Flickr _flickr;
 	private Random _rand;
-	private SearchParameters _query;
-	private Vector<Photo> _photoPool;
-	
-	private final boolean recent = true;
+	private HashMap<String, Vector<Photo>> _photoPools;
 	
 	public static final String FLICKR_SIZE = "flickr_size";
 	
 	static
 	{
 		Config.getConfig().registerString(FLICKR_SIZE, "medium");
+	}
+	
+	private SearchParameters getQueryForTag(String tag)
+	{
+		// create the query
+		SearchParameters query = new SearchParameters();
+		query.setSafeSearch(Flickr.SAFETYLEVEL_SAFE);
+		String tgs[] = {tag};
+		query.setTags(tgs);
+		query.setLicense("4,5,2,1");
+		query.setExtrasLicense(true);
+		query.setExtrasOwnerName(true);
+		query.setExtrasTags(true);
+		
+		return query;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -53,49 +66,25 @@ public class FlickrSource implements ImageSource {
 		_rand = new Random();
 		_flickr = new Flickr("d989e76ce73619396ca877158e11aac2");
 
-//		try {
-//			Collection<License> lics = (Collection<License>)_flickr.getLicensesInterface().getInfo();
-//			for (License li : lics)
-//			{
-//				System.out.println(li.getId() + " " + li.getName());
-//			}
-//		} catch (IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		} catch (SAXException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		} catch (FlickrException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
+		_photoPools = new HashMap<String, Vector<Photo>>();
 		
-		// create the query
-		_query = new SearchParameters();
-		_query.setSafeSearch(Flickr.SAFETYLEVEL_SAFE);
-		//_query.setText("llama");
-		String tgs[] = {"car"};
-		_query.setTags(tgs);
-		_query.setLicense("4,5,2,1");
-		_query.setExtrasLicense(true);
-		_query.setExtrasOwnerName(true);
-		_query.setExtrasTags(true);
-		
-		PhotoList cacheResult;
-		PhotosInterface photosInterface = _flickr.getPhotosInterface();
-		int numToCache = 500;
-		int numImages;
-		
+	}
+
+	private Vector<Photo> getPhotoPoolFromFlickr(String tag) throws ImageException
+	{
 		try {
+			
+			PhotoList cacheResult;
+			PhotosInterface photosInterface = _flickr.getPhotosInterface();
+			int numToCache = 500;
+			int numImages;
+			SearchParameters query = this.getQueryForTag(tag);
+			
 			// get the images
-			if (recent)
-			{
-				cacheResult = photosInterface.getRecent(numToCache,1);
-			}
+			if (tag == null || tag.length() == 0)
+				cacheResult = photosInterface.getRecent(numToCache, 1);
 			else
-			{
-				cacheResult = photosInterface.search(_query, numToCache, 1);
-			}
+				cacheResult = photosInterface.search(query, numToCache, 1);
 			
 			numImages = cacheResult.size();
 			
@@ -105,13 +94,15 @@ public class FlickrSource implements ImageSource {
 			// cache first page of results into _photoPool
 			// this seems to be the best option, since the API is broken
 			//  for selecting random pages
-			_photoPool = new Vector<Photo>();
+			Vector<Photo> pool = new Vector<Photo>();
 			
 			for (int i=0; i<numImages; i++)
 			{
-				_photoPool.add(((Photo)cacheResult.get(i)));
+				pool.add(((Photo)cacheResult.get(i)));
 			}
 
+			return pool;
+			
 		} catch (IOException e) {
 			throw new ImageException();
 		} catch (SAXException e) {
@@ -120,28 +111,46 @@ public class FlickrSource implements ImageSource {
 			e.printStackTrace();
 			throw new ImageException();
 		}
-		
-
 	}
-
 	
-	public AnnotatedImage getRandomImage() {
+	private Vector<Photo> getPhotoPool(String tag) throws ImageException
+	{
+		assert(tag != null);
+		
+		if (! _photoPools.containsKey(tag))
+		{
+			_photoPools.put(tag, getPhotoPoolFromFlickr(tag));
+		}
+		
+		return _photoPools.get(tag);
+	}
+	
+	public AnnotatedImage getRandomImage(String tag) {
 		AnnotatedImage img = null;
+		
+		if (tag == null) tag = "";
 		
 		while (img == null)
 		{
-			img = getRandomImageHelper();
+			img = getRandomImageHelper(tag);
 		}
 		
 		return img;
 	}
 	
-	public AnnotatedImage getRandomImageHelper() {
+	public AnnotatedImage getRandomImageHelper(String tag) {
 		// select random photo from the cached results
-		int whichOne = _rand.nextInt(_photoPool.size());
+		Vector<Photo> photoPool;
+		try {
+			photoPool = getPhotoPool(tag);
+		} catch (ImageException e1) {
+			return null;
+		}
+		
+		int whichOne = _rand.nextInt(photoPool.size());
 		
 		try {
-			return getFlickrImage(_photoPool.get(whichOne), _flickr);
+			return getFlickrImage(photoPool.get(whichOne), _flickr);
 		} catch (Throwable e) {
 			return null;
 		}

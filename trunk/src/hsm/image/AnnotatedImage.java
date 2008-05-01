@@ -123,6 +123,28 @@ public class AnnotatedImage {
 
 	@SuppressWarnings("unchecked")
 	public String[] getTags() {
-		return _props.getProperty("tags").split(",");
+		if (_props.containsKey("tags"))
+		{
+			return _props.getProperty("tags").split(",");
+		}
+		else
+		{
+			return new String[0];
+		}
+	}
+	
+	public boolean hasTag(String tag)
+	{
+		String[] tags = getTags();
+		
+		for (int i=0; i<tags.length; i++)
+		{
+			if (tags[i].equalsIgnoreCase(tag))
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
