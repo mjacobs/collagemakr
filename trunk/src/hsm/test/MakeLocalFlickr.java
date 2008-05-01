@@ -36,7 +36,7 @@ public class MakeLocalFlickr {
 		String[] allTags = TagChecker.getInstance().getTags();
 		int numImages = allTags.length * numPerTag;
 		
-		for (int i=0; i<allTags.length; i++)
+		for (int i=35; i<allTags.length; i++)
 		{
 			for (int j=0; j<numPerTag; j++)
 			{
