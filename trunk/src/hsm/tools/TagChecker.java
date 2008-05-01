@@ -46,13 +46,13 @@ public class TagChecker
 		
 	}
 
-	private TagChecker makeInstance()
+	private static TagChecker makeInstance()
 	{
 		CHECKER_INSTANCE = new TagChecker();
 		return CHECKER_INSTANCE;
 	}
 
-	public TagChecker getInstance()
+	public static TagChecker getInstance()
 	{
 		return CHECKER_INSTANCE == null ? makeInstance() : CHECKER_INSTANCE;
 	}
