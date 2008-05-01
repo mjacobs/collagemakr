@@ -211,6 +211,12 @@ public class TreeGenerator {
 		String[] allTags = TagChecker.getInstance().getTags();
 		String randTag = allTags[(int)(Math.random()*allTags.length)];
 		
+		// HACK!!!
+		if (Config.getConfig().getBoolean("offline"))
+		{
+			randTag = null;
+		}
+		
 		System.out.print("Making leaf... ");
 		
 		while (extractedImage == null)
