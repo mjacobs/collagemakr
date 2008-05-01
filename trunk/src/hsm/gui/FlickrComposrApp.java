@@ -2,10 +2,13 @@ package hsm.gui;
 
 import hsm.evo.Organism;
 import hsm.evo.Population;
+import hsm.global.Config;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,7 +28,9 @@ import javax.swing.SwingUtilities;
 public class FlickrComposrApp
 {
 
-	protected static final int NUM_IMS = 10;
+	//protected static final int NUM_IMS = 9;
+	protected static final int NUM_IMS_W = 3;
+	protected static final int NUM_IMS_H = 3;
 	protected static final int NUM_CHOICES = 3;
 
 	protected Population _currentPopulation;
@@ -48,7 +53,7 @@ public class FlickrComposrApp
 
 	public FlickrComposrApp()
 	{
-		_currentPopulation = Population.randomPopulation(NUM_IMS);
+		_currentPopulation = Population.randomPopulation(NUM_IMS_H*NUM_IMS_W);
 	}
 
 	public void nextState()
@@ -61,6 +66,7 @@ public class FlickrComposrApp
 			jFrame.setContentPane(getJContentPane());
 			jFrame.repaint();
 			jContentPane.revalidate();
+			jFrame.pack();
 		}
 	}
 
@@ -71,7 +77,7 @@ public class FlickrComposrApp
 			jFrame = new JFrame();
 			jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			jFrame.setJMenuBar(getJJMenuBar());
-			jFrame.setSize(3*100+50, 400);
+			jFrame.setSize(Config.getConfig().getInt("canvas_height") + ThumbsPanel.getTHUMB_H() + 50, 400);
 			jFrame.setContentPane(getJContentPane());
 			jFrame.setTitle("Flickr Composr Application");
 
@@ -96,15 +102,14 @@ public class FlickrComposrApp
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new BorderLayout());
 			jContentPane.add(makrTitle, BorderLayout.NORTH);
-			JPanel largerView = new JPanel();
-			thumbsPanel = new ThumbsPanel(_currentPopulation, largerView);
-			JScrollPane jscrPane = new JScrollPane(thumbsPanel);
-			jContentPane.add(jscrPane, BorderLayout.SOUTH);
-			jContentPane.add(new JScrollPane(largerView), BorderLayout.CENTER);
+			thumbsPanel = new ThumbsPanel(_currentPopulation, NUM_IMS_W, NUM_IMS_H);
+			jContentPane.add(thumbsPanel, BorderLayout.CENTER);
+			jFrame.pack();
 		}
 		return jContentPane;
 	}
 	
+
 	/**
 	 * This method initializes jJMenuBar
 	 * 
@@ -163,7 +168,7 @@ public class FlickrComposrApp
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					_currentPopulation = Population.randomPopulation(NUM_IMS);
+					_currentPopulation = Population.randomPopulation(NUM_IMS_H*NUM_IMS_W);
 					jContentPane = null;
 					jFrame.setContentPane(getJContentPane());
 					jFrame.repaint();
@@ -313,6 +318,7 @@ public class FlickrComposrApp
 			{
 				FlickrComposrApp application = new FlickrComposrApp();
 				application.getJFrame().setVisible(true);
+				application.getJFrame().setSize(1050, 880);
 			}
 		});
 	}

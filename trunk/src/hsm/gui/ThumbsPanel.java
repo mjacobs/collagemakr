@@ -28,22 +28,18 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 
 public class ThumbsPanel extends JPanel
 {
-	private static final int THUMB_W = 100;
-	private static final int THUMB_H = 100;
+	private static final int THUMB_W = 320;
+	private static final int THUMB_H = 240;
 	private ThumbLabel in;
 	private LinkedList<Organism> orgs;
-	private JPanel largeDisplay;
 	
-	public ThumbsPanel(Population p, JPanel largeDisplay)
+	public ThumbsPanel(Population p, int w, int h)
 	{
-		super(new GridLayout(1, p.getSize()));
+		super(new GridLayout(w,h));
 		orgs = new LinkedList<Organism>(Arrays.asList(p.getOrganisms()));
-		this.largeDisplay = largeDisplay;
 		addOrganisms();
 	}
 	
@@ -156,14 +152,7 @@ public class ThumbsPanel extends JPanel
 		{
 			return _organism;
 		}
-		public void mouseClicked(MouseEvent e)
-		{
-			Organism o = ((ThumbLabel) e.getSource()).getOrganism();
-			largeDisplay.removeAll();
-			largeDisplay.add(new JLabel(new ImageIcon(o.getComposition().getImage())));
-			largeDisplay.repaint();
-			largeDisplay.revalidate();	
-		}
+		public void mouseClicked(MouseEvent e) {}
 		public void mouseEntered(MouseEvent e) {}
 		public void mouseExited(MouseEvent e) {}
 		public void mousePressed(MouseEvent e)
@@ -231,5 +220,15 @@ public class ThumbsPanel extends JPanel
 			}
 		}
 
+	}
+
+	public static int getTHUMB_W()
+	{
+		return THUMB_W;
+	}
+
+	public static int getTHUMB_H()
+	{
+		return THUMB_H;
 	}
 }
