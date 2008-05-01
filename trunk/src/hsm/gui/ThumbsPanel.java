@@ -104,6 +104,7 @@ public class ThumbsPanel extends JPanel
 		private Organism _organism;
 		private JPopupMenu _menuPopup;
 		private JFileChooser _fc;
+		private ImageIcon icon;
 		
 		private static final String GREAT_TEXT = "WANT!!!";
 		private static final String GOOD_TEXT = "meh";
@@ -114,8 +115,10 @@ public class ThumbsPanel extends JPanel
 		
 		public ThumbLabel(Organism org)
 		{
-			super(new ImageIcon(makeThumb(org.getComposition().getImage(), THUMB_W, THUMB_H)));
-			setBorder(BorderFactory.createLineBorder(Color.RED));
+			super();
+			icon = new ImageIcon(makeThumb(org.getComposition().getImage(), THUMB_W, THUMB_H));
+			setIcon(icon);
+			this.setBorder(BorderFactory.createLineBorder(Color.RED, 5));
 			_organism = org;
 			_organism.setFitness(0.0);
 			
@@ -169,17 +172,17 @@ public class ThumbsPanel extends JPanel
 			if (itemClicked.getText().equals(GOOD_TEXT))
 			{
 				_organism.setFitness(1.0);
-				this.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+				this.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 5));
 			}
 			else if (itemClicked.getText().equals(GREAT_TEXT))
 			{
 				_organism.setFitness(2.0);
-				this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+				this.setBorder(BorderFactory.createLineBorder(Color.GREEN, 5));
 			}
 			else if (itemClicked.getText().equals(BAD_TEXT))
 			{
 				_organism.setFitness(0.0);
-				this.setBorder(BorderFactory.createLineBorder(Color.RED));
+				this.setBorder(BorderFactory.createLineBorder(Color.RED, 5));
 			}
 			else if (itemClicked.getText().equals(SAVE_COMPOSITION))
 			{

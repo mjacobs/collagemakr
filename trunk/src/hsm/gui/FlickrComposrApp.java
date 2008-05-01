@@ -317,8 +317,8 @@ public class FlickrComposrApp
 			public void run()
 			{
 				FlickrComposrApp application = new FlickrComposrApp();
-				application.getJFrame().setVisible(true);
 				application.getJFrame().setSize(1050, 880);
+				application.getJFrame().setVisible(true);
 			}
 		});
 	}
