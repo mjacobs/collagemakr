@@ -112,6 +112,7 @@ public class ThumbsPanel extends JPanel
 		private static final String SAVE_COMPOSITION = "save 4 laturz!";
 		private String SAVE_DIR = System.getProperty("user.home") + System.getProperty("path.seperator");
 		private static final String VIEW_TREE = "i can has tree?";
+		private static final String LARGE_VIEW = "kant see!! BIGGR!";
 		
 		public ThumbLabel(Organism org)
 		{
@@ -145,6 +146,10 @@ public class ThumbsPanel extends JPanel
 			_menuPopup.add(menuItem);
 
 			menuItem = new JMenuItem(VIEW_TREE);
+			menuItem.addActionListener(this);
+			_menuPopup.add(menuItem);
+			
+			menuItem = new JMenuItem(LARGE_VIEW);
 			menuItem.addActionListener(this);
 			_menuPopup.add(menuItem);
 			
@@ -212,6 +217,16 @@ public class ThumbsPanel extends JPanel
 				treeFrame.setContentPane(new JScrollPane(treePane));
 				treeFrame.setSize(300, 400);
 				treeFrame.setVisible(true);
+			}
+			else if (itemClicked.getText().equals(LARGE_VIEW))
+			{
+				JFrame imFrame = new JFrame();
+				BufferedImage im = _organism.getComposition().getImage();
+				JPanel imPanel = new JPanel(new GridLayout(1,1));
+				imPanel.add(new JLabel(new ImageIcon(im)));
+				imFrame.setSize(im.getWidth(), im.getHeight());
+				imFrame.setContentPane(imPanel);
+				imFrame.setVisible(true);
 			}
 		}
 		
