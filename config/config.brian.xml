@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="offline">true</entry>
+<entry key="extract">false</entry>
+<entry key="defer_images">false</entry>
+<entry key="facebook_api_secret">2defc0317e9c7ae639e14c6e91bd5a07</entry>
+<entry key="canvas_height">480</entry>
+<entry key="canvas_width">640</entry>
+<entry key="facebook_api_key">e4b7b6944d60bbff3da88588d453aca3</entry>
+<entry key="flickr_size">medium</entry>
+<entry key="offline_dir">data/features/</entry>
+<entry key="mutation_prob">0.5</entry>
+<entry key="new_tree_height">6</entry>
+
+	<entry key="prob_blur">1.0</entry>
+	<entry key="prob_compositeover">1.0</entry>
+	<entry key="prob_compositexor">0.5</entry>
+	<entry key="prob_compositeadd">0.5</entry>
+	<entry key="prob_compositedifference">1.0</entry>
+	<entry key="prob_compositescreen">1.0</entry>
+	<entry key="prob_compositenegation">1.0</entry>
+	<entry key="prob_compositeexclusion">1.0</entry>
+	<entry key="prob_compositebrightness">0.5</entry>
+	<entry key="prob_compositedodge">1.0</entry>
+	<entry key="prob_compositelighten">1.0</entry>
+	<entry key="prob_dissolve">1.0</entry>
+	<entry key="prob_invert">1.0</entry>
+	<entry key="prob_linearmotionblur">1.0</entry>
+	<entry key="prob_rotate">1.0</entry>
+	<entry key="prob_scale">1.0</entry>
+	<entry key="prob_translate">0.0</entry>
+	<entry key="prob_shadow">1.0</entry>
+	<entry key="prob_solarize">1.0</entry>
+	<entry key="prob_posterize">1.0</entry>
+	
+	<entry key="prob_extract_luminance">1.0</entry>
+	<entry key="prob_extract_magicwand">1.0</entry>
+	
+	<entry key="crossover">true</entry>
+	<entry key="prob_mutation_replace">1.0</entry> 
+	<entry key="prob_mutation_jitter">50.0</entry>
+	<entry key="prob_mutation_op_swap">1.0</entry> 
+	<entry key="prob_mutation_op_wrap">1.0</entry>
+	<entry key="prob_mutation_unwrap">4.0</entry>
+	<entry key="prob_mutation_copy_sibling">1.0</entry> 
+</properties>
