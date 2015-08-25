@@ -1,0 +1,1 @@
+Collage Makr is an experiment in Computer Graphics to generate complex images from found sources using computer vision and generative algorithms.
